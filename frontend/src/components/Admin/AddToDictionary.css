@@ -1,0 +1,50 @@
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .back-button {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: flex-start;
+  }
+  
+  .dictionary-form {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  h2 {
+    color: #333;
+    text-align: center; /* Center the header text */
+    margin-bottom: 20px; /* Add margin for spacing */
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .submit-button-container {
+    display: flex;
+    justify-content: center; /* Center the button */
+  }
+  
+  button {
+    padding: 10px;
+    border-radius: 5px;
+    width: 100%; /* Full width of its container */
+  }
+  
+  button:disabled {
+    opacity: 0.7;
+  }
+  
+  button:hover:not(:disabled) {
+    background-color: #0056b3;
+  }
+  
+  button:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);
+  }  
