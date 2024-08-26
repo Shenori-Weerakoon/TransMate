@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import NavBar from './Navbar';
+
 
 const Translator = () => {
   const [text, setText] = useState('');
@@ -22,7 +24,19 @@ const Translator = () => {
 
   return (
     <div>
-      <h1>Language Translator</h1>
+      <nav className="navbar">
+      <NavBar />
+        {/*<div className="navbar-brand">
+          <h2>Sinhala to English Translator</h2>
+        </div>
+        <div className="navbar-links">
+        <Link to="/">Home</Link>
+          <Link to="/translator">Translator</Link>
+          <Link to="/dictionary">Dictionary</Link>
+          <Link to="/login" className="login-btn">Login</Link>
+        </div>*/}
+      </nav>
+      <h2>Language Translator</h2>
       <textarea value={text} onChange={(e) => setText(e.target.value)} />
       <div>
         <label>From Language</label>
