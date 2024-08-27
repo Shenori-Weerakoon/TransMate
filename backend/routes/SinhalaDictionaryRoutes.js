@@ -2,22 +2,23 @@ const express = require('express');
 const router = express.Router();
 const SinhalaDictionary = require('../models/SinhalaDictionary');
 
-// Add a new word with Sinhala meanings
-router.post('/addWord', async (req, res) => {
-  const { englishWord, sinhalaMeanings } = req.body;
 
-  if (!englishWord) {
-    return res.status(400).json({ message: 'English word is required' });
+// Add a new word with multiple English meanings
+router.post('/addWord', async (req, res) => {
+  const { sinhalaWord, englishWords } = req.body;
+
+  if (!sinhalaWord) {
+    return res.status(400).json({ message: 'Sinhala word is required' });
   }
 
-  const filteredMeanings = sinhalaMeanings.filter(meaning => meaning.trim() !== '');
+  const filteredEnglishWords = englishWords.filter(word => word.trim() !== '');
 
-  if (filteredMeanings.length === 0) {
-    return res.status(400).json({ message: 'At least one Sinhala meaning is required' });
+  if (filteredEnglishWords.length === 0) {
+    return res.status(400).json({ message: 'At least one English word is required' });
   }
 
   try {
-    const newWord = new SinhalaDictionary({ englishWord, sinhalaMeanings: filteredMeanings });
+    const newWord = new SinhalaDictionary({ sinhalaWord, englishWords: filteredEnglishWords });
     await newWord.save();
     res.status(201).json({ message: 'Word added successfully', word: newWord });
   } catch (error) {

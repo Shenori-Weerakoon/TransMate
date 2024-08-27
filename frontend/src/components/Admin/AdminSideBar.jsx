@@ -3,7 +3,7 @@ import { FiLogOut } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
 import SinhalaDictionary from './SinhalaDictionary.jsx';
 import AdminDashboard from './AdminDashboard.jsx';
-import AddToDictionary from './AddToDictionary.jsx';
+//import AddToDictionary from './AddToDictionary.jsx';
 
 
 const AdminSideBar = () => {
@@ -36,7 +36,7 @@ const AdminSideBar = () => {
       height: "100vh",
     },
     sidebar: {
-      width: isMobile ? "100%" : "280px", // Full width on mobile
+      width: isMobile ? "100%" : "200px", // Full width on mobile
       backgroundColor: "#2c3e50",
       padding: "20px",
       display: "flex",
@@ -75,7 +75,7 @@ const AdminSideBar = () => {
     },
     content: {
       flexGrow: 1,
-      padding: isMobile ? "10px" : "20px", // Adjust padding on mobile
+      padding: isMobile ? "10px" : "20px",
       backgroundColor: "#ecf0f1",
       overflowY: "auto",
     },
