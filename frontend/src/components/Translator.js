@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+//import '../components/styles/main.css';
 
 const Translator = () => {
-  const [text, setText] = useState('');
-  const [translatedText, setTranslatedText] = useState('');
-  const [fromLanguage, setFromLanguage] = useState('si');
-  const [toLanguage, setToLanguage] = useState('en');
+  const [text, setText] = useState(''); //input text
+  const [translatedText, setTranslatedText] = useState(''); //output text
+  const [fromLanguage, setFromLanguage] = useState('si'); //source language
+  const [toLanguage, setToLanguage] = useState('en'); //target language
 
   const handleTranslate = async () => {
     try {
@@ -20,29 +21,37 @@ const Translator = () => {
     }
   };
 
+  const handleSwapLanguages = () => {
+    setFromLanguage((prev) => (prev === 'si' ? 'en' : 'si'));
+    setToLanguage((prev) => (prev === 'en' ? 'si' : 'en'));
+    setText('');
+    setTranslatedText('');
+  };
+
   return (
-    <div>
-      <h1>Language Translator</h1>
-      <textarea value={text} onChange={(e) => setText(e.target.value)} />
-      <div>
-        <label>From Language</label>
-        <select value={fromLanguage} onChange={(e) => setFromLanguage(e.target.value)}>
-          <option value="si">Sinhala</option>
-          <option value="en">English</option>
-        </select>
+    <div className="translator-container">
+      <div className="language-selection">
+        <button className="language-button">{fromLanguage}</button>
+        <div className="swap-icon" onClick={handleSwapLanguages}>⇆</div>
+        <button className="language-button">{toLanguage}</button>
       </div>
-      <div>
-        <label>To Language</label>
-        <select value={toLanguage} onChange={(e) => setToLanguage(e.target.value)}>
-          <option value="en">English</option>
-          <option value="si">Sinhala</option>
-        </select>
+      <div className="translation-section">
+        <textarea
+          className="input-text"
+          placeholder={`Enter something in ${fromLanguage}...`}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+        <textarea
+          className="output-text"
+          placeholder={`Translating to ${toLanguage}...`}
+          value={translatedText}
+          readOnly
+        />
       </div>
-      <button onClick={handleTranslate}>Translate</button>
-      <div>
-        <h3>Translated Text</h3>
-        <p>{translatedText}</p>
-      </div>
+      <button className="translate-button" onClick={handleTranslate}>
+        Translate
+      </button>
     </div>
   );
 };
