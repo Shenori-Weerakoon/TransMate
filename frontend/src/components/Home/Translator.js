@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import NavBar from './Navbar';
-
+import '../Home/main.css'
 const Translator = () => {
   const [text, setText] = useState('');
   const [translatedText, setTranslatedText] = useState('');
@@ -51,12 +51,20 @@ const Translator = () => {
       console.error('Translation failed:', error);
     }
   };
+
+  const handleSwapLanguages = () => {
+    setFromLanguage((prev) => (prev === 'si' ? 'en' : 'si'));
+    setToLanguage((prev) => (prev === 'en' ? 'si' : 'en'));
+    setText('');
+    setTranslatedText('');
+  };
   
   return (
     <div>
       <nav className="navbar">
         <NavBar />
       </nav>
+      {/*
       <h2>Language Translator</h2>
       <textarea value={text} onChange={(e) => setText(e.target.value)} />
       <div>
@@ -89,6 +97,50 @@ const Translator = () => {
   )}
   <p>{translatedText}</p>
 </div>
+
+
+*/}
+
+<div className="translator-container">
+      <div className="language-selection">
+        <button className="language-button">{fromLanguage}</button>
+        <div className="swap-icon" onClick={handleSwapLanguages}>⇆</div>
+        <button className="language-button">{toLanguage}</button>
+      </div>
+      <div className="translation-section">
+        <textarea
+          className="input-text"
+          placeholder={`Enter something in ${fromLanguage}...`}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+        <textarea
+          className="output-text"
+          placeholder={`Translating to ${toLanguage}...`}
+          value={translatedText}
+          readOnly
+          style={{marginLeft:'30px'}}
+          
+        />
+      </div>
+      <button className="translate-button" onClick={handleTranslate} style={{width:'25%'}}>
+        Translate
+      </button>
+
+      {Object.keys(translationOptions).length > 0 ? (
+    <ul>
+      {Object.entries(translationOptions).map(([word, options], index) => (
+        <li key={index}>
+          <strong>{word}:</strong> {options.join(', ')}
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p></p>
+  )}
+    </div>
+
+
 
     </div>
   );
