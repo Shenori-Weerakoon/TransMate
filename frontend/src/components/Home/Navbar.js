@@ -28,11 +28,11 @@ function NavBar({ isAuthenticated, user, logout }) {
       className={`custom-navbar ${isToggled ? 'navbar-toggled' : ''}`}
     >
       <Container fluid>
-        <Navbar.Brand href="/" className="brand-text">
+        <Navbar.Brand href="/" className="brand-text" >
           TransMate
         </Navbar.Brand>
 
-        <Navbar.Toggle aria-controls="navbarScroll" onClick={handleToggleClick} />
+        {/* <Navbar.Toggle aria-controls="navbarScroll" onClick={handleToggleClick} /> */}
         <Navbar.Collapse id="navbarScroll">
           <Nav className="nav-links" style={{}}>
             <LinkContainer to="/">
