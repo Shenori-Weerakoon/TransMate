@@ -99,11 +99,11 @@ const translateText = async (req, res) => {
 
     for (let word of words) {
       // Search for the word in the Sinhala dictionary
-      const dictionaryEntry = await SinhalaDictionary.findOne({ sinhalaMeanings: word });
+      const dictionaryEntry = await SinhalaDictionary.findOne({ sinhalaWord: word });
 
       if (dictionaryEntry) {
         // If the word exists in the dictionary, collect possible Sinhala meanings
-        possibleTranslations[word] = dictionaryEntry.sinhalaMeanings;
+        possibleTranslations[word] = dictionaryEntry.englishWords;
       } else {
         // If word not found, you can implement an external API call or use a placeholder
         possibleTranslations[word] = ['No suggestions available'];
