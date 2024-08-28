@@ -187,8 +187,28 @@ const translateText = async (req, res) => {
         // If the word exists in the dictionary, collect possible English meanings
         possibleTranslations[word] = dictionaryEntry.englishWords;
       } else {
-        // If word not found, you can implement an external API call or use a placeholder
-        possibleTranslations[word] = ['No suggestions available'];
+       // If word not found in the dictionary, translate the word using Microsoft Translator API
+       const translationResponse = await axios({
+        baseURL: endpoint,
+        url: '/translate',
+        method: 'post',
+        headers: {
+          'Ocp-Apim-Subscription-Key': key,
+          'Ocp-Apim-Subscription-Region': location,
+          'Content-Type': 'application/json',
+          'X-ClientTraceId': uuidv4().toString()
+        },
+        params: {
+          'api-version': '3.0',
+          'from': 'si', // Sinhala language code
+          'to': 'en' // English language code
+        },
+        data: [{ 'text': word }],
+        responseType: 'json'
+      });
+
+      const translatedWord = translationResponse.data[0].translations[0].text;
+      possibleTranslations[word] = [translatedWord];
       }
     }
 
