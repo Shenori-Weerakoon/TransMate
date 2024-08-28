@@ -127,7 +127,7 @@ const Translator = () => {
         Translate
       </button>
 
-      {Object.keys(translationOptions).length > 0 ? (
+      {fromLanguage === 'si' && Object.keys(translationOptions).length > 0 ? (
     <ul>
       {Object.entries(translationOptions).map(([word, options], index) => (
         <li key={index}>
