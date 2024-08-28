@@ -4,7 +4,6 @@ import { IoMdAddCircleOutline, IoMdCheckmarkCircleOutline, IoMdCloseCircleOutlin
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-
 const SinhalaDictionary = () => {
   const [words, setWords] = useState([]);
   const [showAddWordModal, setShowAddWordModal] = useState(false);
@@ -29,7 +28,7 @@ const SinhalaDictionary = () => {
       word._id === id
         ? {
             ...word,
-            status: word.status ? word.status.map((status, i) => (i === index ? "accepted" : status)) : []
+            status: (word.status || []).map((status, i) => (i === index ? "accepted" : status))
           }
         : word
     ));
@@ -40,7 +39,7 @@ const SinhalaDictionary = () => {
       word._id === id
         ? {
             ...word,
-            status: word.status ? word.status.map((status, i) => (i === index ? "rejected" : status)) : []
+            status: (word.status || []).map((status, i) => (i === index ? "rejected" : status))
           }
         : word
     ));
