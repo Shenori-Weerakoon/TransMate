@@ -5,25 +5,26 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import toast from 'react-hot-toast';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import './AddToDictionary.css'; // Import custom CSS
+import './AddToDictionary.css';
+
 
 const AddToDictionary = () => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    englishWord: "",
-    sinhalaMeanings: ["", "", ""],
+    sinhalaWord: "",
+    englishWords: ["", "", ""],
   });
 
   const handleChange = (e, index) => {
     const { name, value } = e.target;
-    if (name === "sinhalaMeanings") {
-      const newMeanings = [...formData.sinhalaMeanings];
-      newMeanings[index] = value;
+    if (name === "englishWords") {
+      const newWords = [...formData.englishWords];
+      newWords[index] = value;
       setFormData((prevState) => ({
         ...prevState,
-        sinhalaMeanings: newMeanings,
+        englishWords: newWords,
       }));
     } else {
       setFormData((prevState) => ({
@@ -35,7 +36,8 @@ const AddToDictionary = () => {
 
   const validateForm = (data) => {
     const errors = {};
-    if (!data.englishWord.trim()) errors.englishWord = "English word is required";
+    if (!data.sinhalaWord.trim()) errors.sinhalaWord = "Sinhala word is required";
+    if (!data.englishWords[0].trim()) errors.englishWords = "At least one English word is required";
     return errors;
   };
 
@@ -49,7 +51,7 @@ const AddToDictionary = () => {
         console.log(response.data);
         toast.success('Word added successfully!');
         setTimeout(() => {
-          navigate("#SinhalaDictionary");
+          navigate(-1); // Navigate back to the previous page
         }, 1000);
       } catch (error) {
         console.error("Error adding word:", error.response?.data || error.message);
@@ -60,7 +62,7 @@ const AddToDictionary = () => {
     } else {
       setErrors(errorsObj);
     }
-  };
+  };  
 
   return (
     <div className="container mt-5"><br/><br/>
@@ -69,29 +71,31 @@ const AddToDictionary = () => {
       </div>
       <h2>Add to Dictionary</h2>
       <Form onSubmit={handleSubmit} className="dictionary-form">
-        <Form.Group controlId="englishWord" className="mb-4">
-          <Form.Label>English Word : </Form.Label>
+        <Form.Group controlId="sinhalaWord" className="mb-4">
+          <Form.Label>Sinhala Word : </Form.Label>
           <Form.Control
             type="text"
-            name="englishWord"
-            value={formData.englishWord}
-            onChange={handleChange}
-            isInvalid={!!errors.englishWord}
-            placeholder="Enter English word"
+            name="sinhalaWord"
+            value={formData.sinhalaWord}
+            onChange={(e) => handleChange(e, null)}
+            isInvalid={!!errors.sinhalaWord}
+            placeholder="Enter Sinhala word"
           />
-          <Form.Control.Feedback type="invalid">{errors.englishWord}</Form.Control.Feedback>
+          <Form.Control.Feedback type="invalid">{errors.sinhalaWord}</Form.Control.Feedback>
         </Form.Group>
 
-        {formData.sinhalaMeanings.map((meaning, index) => (
-          <Form.Group controlId={`sinhalaMeaning${index}`} className="mb-4" key={index}>
-            <Form.Label>Sinhala Meaning {index + 1} (Optional) : </Form.Label>
+        {formData.englishWords.map((word, index) => (
+          <Form.Group controlId={`englishWord${index}`} className="mb-4" key={index}>
+            <Form.Label>English Word {index + 1} : </Form.Label>
             <Form.Control
               type="text"
-              name="sinhalaMeanings"
-              value={meaning}
+              name="englishWords"
+              value={word}
               onChange={(e) => handleChange(e, index)}
-              placeholder={`Enter Sinhala meaning ${index + 1}`}
+              placeholder={`Enter English word ${index + 1}`}
+              isInvalid={index === 0 && !!errors.englishWords} // Only apply error for the first input if needed
             />
+            {index === 0 && <Form.Control.Feedback type="invalid">{errors.englishWords}</Form.Control.Feedback>}
           </Form.Group>
         ))}
 

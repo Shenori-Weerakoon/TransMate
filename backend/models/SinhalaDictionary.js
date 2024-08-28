@@ -1,21 +1,22 @@
 const mongoose = require('mongoose');
 
+
 const sinhalaDictionarySchema = new mongoose.Schema({
-  englishWord: {
+  sinhalaWord: {
     type: String,
     required: true,
     unique: true,
   },
-  sinhalaMeanings: {
-    type: [String], // Array of strings to hold multiple meanings
+  englishWords: {
+    type: [String], // Array of English words
     required: true,
     validate: {
       validator: function(array) {
         return array.length >= 1 && array.length <= 3;
       },
-      message: 'You must provide between 1 and 3 Sinhala meanings'
+      message: 'You must provide between 1 and 3 English words'
     }
-  },
+  }
 });
 
 const SinhalaDictionary = mongoose.model('SinhalaDictionary', sinhalaDictionarySchema);
