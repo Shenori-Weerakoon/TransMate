@@ -1,0 +1,124 @@
+/* Background settings */
+.background {
+  background-image: url('../../assets/login.jpg');
+  background-size: cover;
+  background-blend-mode: overlay;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Adding overlay color */
+  padding: 20px;
+}
+
+/* Card styling */
+.card {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  border: none;
+  padding: 30px;
+  max-width: 400px;
+  width: 100%;
+  margin: 20px;
+  text-align: center; /* Center-aligns text and elements within the card */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Card header */
+.card-header {
+  background-color: transparent;
+  border-bottom: none;
+  color: #2c3e50; /* A darker, more modern text color */
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+/* Input styling */
+.form-control {
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 15px;
+  border: 1px solid #ced4da;
+  font-size: 16px;
+  width: 100%; /* Makes the input fields stretch to the width of the card */
+  max-width: 350px; /* Optional: Limit the maximum width of the input fields */
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+}
+
+/* Button styling */
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 12px;
+  width: 100%; /* Makes the button stretch to the width of the card */
+  max-width: 350px; /* Optional: Limit the maximum width of the button */
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #004085;
+}
+
+/* Invalid input feedback */
+.is-invalid {
+  border-color: #dc3545;
+}
+
+.invalid-feedback {
+  color: #dc3545;
+  font-size: 14px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .background {
+    padding: 15px;
+  }
+
+  .card {
+    padding: 25px;
+  }
+
+  .card-header {
+    font-size: 26px;
+  }
+}
+
+@media (max-width: 576px) {
+  .card {
+    padding: 20px;
+  }
+
+  .card-header {
+    font-size: 24px;
+  }
+
+  .btn-primary {
+    font-size: 16px;
+  }
+}
+
+/* Text styling for the link */
+.text-center a {
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.text-center a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
