@@ -276,5 +276,17 @@ const translateText = async (req, res) => {
   }
 };
 
-module.exports = { translateText };
+// Read translations
+const getTranslations = async (req, res) => {
+  try {
+    const translations = await Translation.find();
+    res.json(translations);
+  } catch (error) {
+    console.error('Error fetching translations:', error.message);
+    res.status(500).json({ message: 'Failed to fetch translations' });
+  }
+};
+
+
+module.exports = { translateText,  getTranslations};
 
