@@ -3,8 +3,9 @@ import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import { LinkContainer } from 'react-router-bootstrap';
-import './Navbar.css'; // External CSS
+import './home.css'; // External CSS
 import logo from '../../assets/TransMate.png';
+
 
 function NavBar({ isAuthenticated, user, logout }) {
   const [isToggled, setIsToggled] = useState(false);
@@ -28,13 +29,12 @@ function NavBar({ isAuthenticated, user, logout }) {
       className={`custom-navbar ${isToggled ? 'navbar-toggled' : ''}`}
     >
       <Container fluid>
+        {/* <Navbar.Toggle aria-controls="navbarScroll" onClick={handleToggleClick} /> */}
+        <Navbar.Collapse id="navbarScroll" style={{display:'inline-flex'}}>
         <Navbar.Brand href="/" className="brand-text" >
           <img src={logo} alt="" style={{height:'100px', width:'100px', borderRadius:'50%'}}/>
         </Navbar.Brand>
-
-        {/* <Navbar.Toggle aria-controls="navbarScroll" onClick={handleToggleClick} /> */}
-        <Navbar.Collapse id="navbarScroll">
-          <Nav className="nav-links" style={{}}>
+          <Nav className="nav-links">
             <LinkContainer to="/">
               <Nav.Link className="nav-link-custom">
                 Home

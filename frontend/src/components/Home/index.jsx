@@ -18,9 +18,9 @@ function Index() {
       <div className="hero-section">
         <div className="overlay"></div>
         <div className="hero-content">
-          <h2>Welcome to the Sinhala to English Translator</h2>
+          <h2>Welcome to the Sinhala-English Translator</h2>
           <p>Translate effortlessly and explore an extensive dictionary with ease.</p>
-          <button className="get-started-btn" onClick={scrollToContent}>Get Started</button>
+          <button className="get-started-btn" onClick={scrollToContent} style={{width:'350px'}}>Get Started</button>
         </div>
       </div>
 
