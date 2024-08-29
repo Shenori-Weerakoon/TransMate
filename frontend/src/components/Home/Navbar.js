@@ -4,7 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import { LinkContainer } from 'react-router-bootstrap';
 import './Navbar.css'; // External CSS
-
+import logo from '../../assets/TransMate.png';
 
 function NavBar({ isAuthenticated, user, logout }) {
   const [isToggled, setIsToggled] = useState(false);
@@ -29,7 +29,7 @@ function NavBar({ isAuthenticated, user, logout }) {
     >
       <Container fluid>
         <Navbar.Brand href="/" className="brand-text" >
-          TransMate
+          <img src={logo} alt="" style={{height:'100px', width:'100px', borderRadius:'50%'}}/>
         </Navbar.Brand>
 
         {/* <Navbar.Toggle aria-controls="navbarScroll" onClick={handleToggleClick} /> */}
