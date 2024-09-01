@@ -1,6 +1,6 @@
 /* Background settings */
 .background {
-  background-image: url('../../assets/login.jpg');
+  background-image: url('../../assets/login1.jpg');
   background-size: cover;
   background-blend-mode: overlay;
   display: flex;

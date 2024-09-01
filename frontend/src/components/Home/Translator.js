@@ -8,6 +8,7 @@ const Translator = () => {
   const [translationOptions, setTranslationOptions] = useState({});
   const [fromLanguage, setFromLanguage] = useState('si');
   const [toLanguage, setToLanguage] = useState('en');
+  const [grammarErrors, setGrammarErrors] = useState([]);
 
   // const handleTranslate = async () => {
   //   try {
@@ -45,6 +46,10 @@ const Translator = () => {
         setTranslationOptions(response.data.possibleTranslations);
       }
 
+      if(response.data.grammarErrors){
+        setGrammarErrors(response.data.grammarErrors);
+      }
+
       console.log(translatedText);
       console.log(translationOptions);
     } catch (error) {
@@ -57,6 +62,20 @@ const Translator = () => {
     setToLanguage((prev) => (prev === 'en' ? 'si' : 'en'));
     setText('');
     setTranslatedText('');
+  };
+
+  const highlightErrors = () => {
+    let highlightedText = text;
+
+    grammarErrors.forEach(error => {
+      const errorText = highlightedText.slice(error.offset, error.offset + error.length);
+      highlightedText = highlightedText.replace(
+        errorText,
+        `<span class="grammar-error" title="${error.message}">${errorText}</span>`
+      );
+    });
+
+    return { __html: highlightedText };
   };
   
   return (
@@ -113,6 +132,7 @@ const Translator = () => {
           placeholder={`Enter something in ${fromLanguage}...`}
           value={text}
           onChange={(e) => setText(e.target.value)}
+          // style={{width:'400px'}}
         />
         <textarea
           className="output-text"
@@ -138,6 +158,14 @@ const Translator = () => {
   ) : (
     <p></p>
   )}
+
+    {fromLanguage === 'en' && grammarErrors.length > 0 && (
+          <div
+            className="highlighted-text"
+            dangerouslySetInnerHTML={highlightErrors()}
+          />
+        )}
+
     </div>
 
 

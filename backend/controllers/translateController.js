@@ -238,7 +238,7 @@ const translateText = async (req, res) => {
     if (from === 'en') { // Perform grammar check only if the original text is in English
       const grammarResponse = await axios.post('https://api.languagetool.org/v2/check', null, {
         params: {
-          text,
+          text: translatedText, // Check the translated text
           language: 'en-US'
         },
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
@@ -252,6 +252,13 @@ const translateText = async (req, res) => {
         offset: match.offset,
         length: match.length
       }));
+
+      // Highlight grammar errors in the translated text
+      grammarErrors.forEach(error => {
+        const errorText = translatedText.substring(error.offset, error.offset + error.length);
+        const suggestions = error.replacements.join(', ');
+        translatedText = translatedText.replace(errorText, `[${errorText} (Suggestions: ${suggestions})]`);
+      });
     }
 
     // Save the translation in your database (optional)
