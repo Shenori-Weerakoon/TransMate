@@ -57,22 +57,28 @@ router.patch('/acceptWord/:id/:index', async (req, res) => {
   }
 });
 
-// Reject a specific English word
+// Reject a specific English word within a Sinhala word object
 router.patch('/rejectWord/:id/:index', async (req, res) => {
   const { id, index } = req.params;
-
   try {
     const word = await SinhalaDictionary.findById(id);
     if (!word) {
       return res.status(404).json({ message: 'Word not found' });
     }
 
-    word.englishWords.splice(index, 1);
-    word.status.splice(index, 1);
+    word.englishWords.splice(index, 1); // Remove the rejected English word
+    word.status.splice(index, 1); // Remove the status corresponding to the rejected word
+
+    if (word.englishWords.length === 0) {
+      // If all English words are rejected, delete the Sinhala word
+      await SinhalaDictionary.findByIdAndDelete(id);
+      return res.status(200).json({ message: 'All words rejected; Sinhala word deleted' });
+    }
+
     await word.save();
-    res.status(200).json({ message: 'Word rejected and removed successfully' });
+    res.status(200).json({ message: 'Word rejected successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: error.message });
   }
 });
 

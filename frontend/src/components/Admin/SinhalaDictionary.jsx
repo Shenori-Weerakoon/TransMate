@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Button, Table, Modal, Form } from "react-bootstrap";
 import { IoMdAddCircleOutline, IoMdCheckmarkCircleOutline, IoMdCloseCircleOutline } from "react-icons/io";
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import './AddToDictionary.css';
@@ -53,21 +51,33 @@ const SinhalaDictionary = () => {
   const handleReject = async (id, index) => {
     try {
       await axios.patch(`http://localhost:5000/api/sinhala-dictionary/rejectWord/${id}/${index}`);
-      setWords(prevWords =>
-        prevWords.map(word =>
-          word._id === id
-            ? {
-                ...word,
-                englishWords: word.englishWords.filter((_, i) => i !== index),
-                status: word.status.filter((_, i) => i !== index)
-              }
-            : word
-        )
-      );
+      
+      setWords(prevWords => {
+        const updatedWords = prevWords.map(word => {
+          if (word._id === id) {
+            const updatedEnglishWords = word.englishWords.filter((_, i) => i !== index);
+            const updatedStatus = word.status.filter((_, i) => i !== index);
+  
+            // Check if all English words are rejected and delete the Sinhala word
+            if (updatedEnglishWords.length === 0) {
+              handleDelete(id);
+            }
+  
+            return {
+              ...word,
+              englishWords: updatedEnglishWords,
+              status: updatedStatus,
+            };
+          }
+          return word;
+        });
+        return updatedWords;
+      });
+  
     } catch (error) {
       console.error("Error rejecting word:", error);
     }
-  };
+  };  
 
   const handleDelete = async (id) => {
     try {
@@ -193,30 +203,13 @@ const SinhalaDictionary = () => {
                   <td style={{ padding: "5px", verticalAlign: "middle" }}>{word.status[index] || ''}</td>
                   <td style={{ padding: "0px", verticalAlign: "middle" }}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                      {word.status[index] === 'pending' && (
+                      {word.status[index] !== "accepted" && word.status[index] !== "" && (
                         <>
-                          <Button
-                            variant="success"
-                            onClick={() => handleAccept(word._id, index)}
-                            style={{
-                              marginRight: '1px',
-                              backgroundColor: '#28a745',
-                              color: '#fff',
-                              border: 'none'
-                            }}
-                          >
-                            <IoMdCheckmarkCircleOutline style={{ marginRight: '0px' }} />
+                          <Button variant="success" onClick={() => handleAccept(word._id, index)} style={{ marginRight: '5px', backgroundColor: '#28a745', color: '#fff', border: 'none' }}>
+                            <IoMdCheckmarkCircleOutline />
                           </Button>
-                          <Button
-                            variant="danger"
-                            onClick={() => handleReject(word._id, index)}
-                            style={{
-                              backgroundColor: '#dc3545',
-                              color: '#fff',
-                              border: 'none'
-                            }}
-                          >
-                            <IoMdCloseCircleOutline style={{ marginRight: '0px' }} />
+                          <Button variant="danger" onClick={() => handleReject(word._id, index)} style={{ backgroundColor: '#dc3545', color: '#fff', border: 'none' }}>
+                            <IoMdCloseCircleOutline />
                           </Button>
                         </>
                       )}
@@ -234,46 +227,50 @@ const SinhalaDictionary = () => {
         <Modal.Header closeButton>
           <Modal.Title>Edit Word</Modal.Title>
         </Modal.Header>
-        <Modal.Body style={{ backgroundColor: '#f9f9f9', padding: '20px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+        <Modal.Body>
           <Form noValidate validated={validated} onSubmit={handleEditWord}>
-            <Form.Group controlId="sinhalaWordEdit" className="mb-4">
-              <Form.Label>Sinhala Word:</Form.Label>
+            <Form.Group className="mb-3" controlId="sinhalaWord">
+              <Form.Label>Sinhala Word</Form.Label>
               <Form.Control
-                required
                 type="text"
-                placeholder="Enter Sinhala Word"
                 value={editWord.sinhalaWord}
-                onChange={(e) => setEditWord({ ...editWord, sinhalaWord: e.target.value })}
+                onChange={(e) => setEditWord(prevState => ({ ...prevState, sinhalaWord: e.target.value }))}
+                required
                 isInvalid={!!errors.sinhalaWord}
               />
-              <Form.Control.Feedback type="invalid">{errors.sinhalaWord}</Form.Control.Feedback>
+              <Form.Control.Feedback type="invalid">
+                {errors.sinhalaWord}
+              </Form.Control.Feedback>
             </Form.Group>
 
-            {editWord.englishWords.map((word, index) => (
-              <Form.Group key={index} controlId={`formEnglishWordEdit${index}`} className="mb-4">
-                <Form.Label>English Word {index + 1}:</Form.Label>
+            {editWord.englishWords.map((englishWord, index) => (
+              <Form.Group className="mb-3" controlId={`englishWord${index}`} key={index}>
+                <Form.Label>English Word {index + 1}</Form.Label>
                 <Form.Control
-                  required
                   type="text"
-                  placeholder={`Enter English Word ${index + 1}`}
-                  value={word}
+                  value={englishWord}
                   onChange={(e) => handleEnglishWordChange('editWord', index, e.target.value)}
+                  required={index === 0}
                   isInvalid={index === 0 && !!errors.englishWords}
                 />
-                {index === 0 && <Form.Control.Feedback type="invalid">{errors.englishWords}</Form.Control.Feedback>}
+                {index === 0 && (
+                  <Form.Control.Feedback type="invalid">
+                    {errors.englishWords}
+                  </Form.Control.Feedback>
+                )}
               </Form.Group>
             ))}
 
-            <Button variant="primary" type="submit" disabled={loading} style={{ width: '100%' }}>
-              {loading ? 'Saving...' : 'Save Changes'}
-            </Button>
+            <div className="d-flex justify-content-between">
+              <Button variant="secondary" onClick={handleCloseEditWordModal}>
+                Close
+              </Button>
+              <Button variant="primary" type="submit" disabled={loading}>
+                Save Changes
+              </Button>
+            </div>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseEditWordModal}>
-            Close
-          </Button>
-        </Modal.Footer>
       </Modal>
     </div>
   );
