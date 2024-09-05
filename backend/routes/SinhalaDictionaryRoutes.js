@@ -39,6 +39,16 @@ router.get('/getWords', async (req, res) => {
   }
 });
 
+// Get only accepted words
+router.get('/accepted', async (req, res) => {
+  try {
+    const words = await SinhalaDictionary.find({ 'status': 'accepted' });
+    res.status(200).json(words);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+});
+
 // Accept a specific English word
 router.patch('/acceptWord/:id/:index', async (req, res) => {
   const { id, index } = req.params;

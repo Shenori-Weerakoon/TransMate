@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button, Table, Modal, Form } from "react-bootstrap";
-import { IoMdAddCircleOutline, IoMdCheckmarkCircleOutline, IoMdCloseCircleOutline } from "react-icons/io";
+import { IoMdAddCircleOutline, IoMdCheckmarkCircleOutline, IoMdCloseCircleOutline, IoMdDownload } from "react-icons/io";
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { generatePDF } from "../../utils/GeneratePDF";
 import './AddToDictionary.css';
+
 
 const SinhalaDictionary = () => {
   const [words, setWords] = useState([]);
@@ -16,7 +18,45 @@ const SinhalaDictionary = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const [acceptedWords, setAcceptedWords] = useState([]);
 
+  useEffect(() => {
+    fetchAcceptedWords();
+  }, []);
+
+  // Function to fetch accepted words
+  const fetchAcceptedWords = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/sinhala-dictionary/accepted');
+      setAcceptedWords(response.data);
+    } catch (error) {
+      console.error("Error fetching accepted words:", error);
+    }
+  };
+
+  const prepareAcceptedWordsPDFData = (words) => {
+    const title = "Accepted Words Report";
+    const columns = ["Sinhala Word", "English Word 1", "English Word 2", "English Word 3"];
+    const data = words.map(word => {
+      const acceptedEnglishWords = word.englishWords.map((englishWord, index) => (
+        word.status[index] === "accepted" ? englishWord : ""
+      ));
+      return {
+        "Sinhala Word": word.sinhalaWord,
+        "English Word 1": acceptedEnglishWords[0] || '',
+        "English Word 2": acceptedEnglishWords[1] || '',
+        "English Word 3": acceptedEnglishWords[2] || ''
+      };
+    });
+    const fileName = "accepted_words_report";
+    return { title, columns, data, fileName };
+  };  
+  
+  const downloadAcceptedWordsPDF = () => {
+    const { title, columns, data, fileName } = prepareAcceptedWordsPDFData(acceptedWords);
+    generatePDF(title, columns, data, fileName);
+  };  
+  
   useEffect(() => {
     const fetchWords = async () => {
       try {
@@ -149,33 +189,37 @@ const SinhalaDictionary = () => {
 
   return (
     <div className="container mt-5" style={{ paddingLeft: "0px" }}>
-      <h1 className="mb-5 text-center">Sinhala Dictionary Words</h1>
+      <h1 className="mb-5 text-center" style={{color:'darkcyan'}}>Sinhala Dictionary Words</h1>
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="d-flex justify-content-between align-items-center mb-4" style={{display:'flex'}}>
         <Link to="/AddToDictionary">
-          <Button variant="primary" onClick={handleShowAddWordModal}>
+          <Button variant="primary" onClick={handleShowAddWordModal} style={{width:'500px', marginRight:'100px'}}>
             <IoMdAddCircleOutline className="mb-1" /> Add Word
           </Button>
         </Link>
+          <Button className="btn-danger" onClick={downloadAcceptedWordsPDF} style={{backgroundColor:'green', borderColor:'green'}}>
+            <IoMdDownload className="mb-1" /> <span>Download Accepted Words</span>
+          </Button>
+
       </div><br/>
 
       <Table bordered hover className="table-bordered" style={{ backgroundColor: "#f9f9f9", borderRadius: "10px", overflow: "hidden", border: "2px solid black", width: "100%", tableLayout: "fixed" }}>
         <thead>
-          <tr align="center" style={{ backgroundColor: "#007bff", color: "white", fontSize: "14px" }}>
+          <tr align="center" style={{ backgroundColor: "#007bff", color: "white", fontSize: "13px", backgroundColor:'darkcyan' }}>
             <th style={{ padding: "5px", width: "15%" }}>Sinhala Word</th>
             <th style={{ padding: "10px", width: "10%" }}>Edit/Delete</th>
             <th style={{ padding: "5px", width: "15%" }}>English Word 1</th>
-            <th style={{ padding: "5px", width: "10%" }}>Status 1</th>
-            <th style={{ padding: "0px", width: "10%" }}>Action 1</th>
+            <th style={{ padding: "6px", width: "10%" }}>Status</th>
+            <th style={{ padding: "0px", width: "10%" }}>Action</th>
             <th style={{ padding: "5px", width: "15%" }}>English Word 2</th>
-            <th style={{ padding: "5px", width: "10%" }}>Status 2</th>
-            <th style={{ padding: "0px", width: "10%" }}>Action 2</th>
-            <th style={{ padding: "5px", width: "15%" }}>English Word 3</th>
-            <th style={{ padding: "5px", width: "10%" }}>Status 3</th>
-            <th style={{ padding: "0px", width: "10%" }}>Action 3</th>
+            <th style={{ padding: "6px", width: "10%" }}>Status</th>
+            <th style={{ padding: "0px", width: "10%" }}>Action</th>
+            <th style={{ padding: "5px", width: "15.5%" }}>English Word 3</th>
+            <th style={{ padding: "6px", width: "10%" }}>Status</th>
+            <th style={{ padding: "0px", width: "10%" }}>Action</th>
           </tr>
         </thead>
-        <tbody align="center" style={{ backgroundColor: "#e9ecef" }}>
+        <tbody align="center" style={{ backgroundColor: "#e9ecef", fontSize: "12px" }}>
           {words.map(word => (
             <tr key={word._id}>
               <td style={{ padding: "5px", verticalAlign: "middle" }}>{word.sinhalaWord}</td>
@@ -195,6 +239,13 @@ const SinhalaDictionary = () => {
                   >
                     <FaTrash style={{ marginRight: '0px' }} />
                   </Button>
+                  {/*<Button
+                    variant="success"
+                    onClick={() => handleDelete(word._id)}
+                    style={{ backgroundColor: '#d9534f', borderColor: '#d43f3a' }}
+                  >
+                    <FaTrash style={{ marginRight: '0px' }} />
+                  </Button>*/}
                 </div>
               </td>
               {(word.englishWords || []).map((englishWord, index) => (
@@ -205,7 +256,7 @@ const SinhalaDictionary = () => {
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       {word.status[index] !== "accepted" && word.status[index] !== "" && (
                         <>
-                          <Button variant="success" onClick={() => handleAccept(word._id, index)} style={{ marginRight: '5px', backgroundColor: '#28a745', color: '#fff', border: 'none' }}>
+                          <Button variant="success" onClick={() => handleAccept(word._id, index)} style={{ marginRight: '2px', backgroundColor: '#28a745', color: '#fff', border: 'none' }}>
                             <IoMdCheckmarkCircleOutline />
                           </Button>
                           <Button variant="danger" onClick={() => handleReject(word._id, index)} style={{ backgroundColor: '#dc3545', color: '#fff', border: 'none' }}>
