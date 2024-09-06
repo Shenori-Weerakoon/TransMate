@@ -283,5 +283,47 @@ const translateText = async (req, res) => {
   }
 };
 
-module.exports = { translateText };
+const getTranslations = async (req, res) => {
+  try {
+    const translations = await Translation.find();
+    console.log('Fetched Translations:', translations);
+    res.json(translations);
+  } catch (error) {
+    console.error('Error fetching translations:', error.message);
+    res.status(500).json({ message: 'Failed to fetch translations' });
+  }
+};
+
+// Update translation
+const updateTranslation = async (req, res) => {
+  const { id } = req.params;
+  const { text, translatedText } = req.body;
+
+  try {
+    const updatedTranslation = await Translation.findByIdAndUpdate(
+      id,
+      { text, translatedText },
+      { new: true }
+    );
+    res.json(updatedTranslation);
+  } catch (error) {
+    console.error('Error updating translation:', error.message);
+    res.status(500).json({ message: 'Failed to update translation' });
+  }
+};
+
+// Delete translation
+const deleteTranslation = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await Translation.findByIdAndDelete(id);
+    res.json({ message: 'Translation deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting translation:', error.message);
+    res.status(500).json({ message: 'Failed to delete translation' });
+  }
+};
+
+module.exports = { translateText, getTranslations, updateTranslation, deleteTranslation };
 
