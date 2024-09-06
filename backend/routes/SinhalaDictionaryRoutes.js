@@ -39,6 +39,27 @@ router.get('/getWords', async (req, res) => {
   }
 });
 
+// Search words by Sinhala word, English word, or status
+router.get('/search', async (req, res) => {
+  const { query } = req.query;
+
+  try {
+    const regex = new RegExp(query, 'i'); // Case-insensitive search
+
+    const words = await SinhalaDictionary.find({
+      $or: [
+        { sinhalaWord: regex }, // Match Sinhala word
+        { englishWords: { $elemMatch: { $regex: regex } } }, // Match any English word
+        { status: { $elemMatch: { $regex: regex } } } // Match status
+      ]
+    });
+
+    res.status(200).json(words);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+});
+
 // Get only accepted words
 router.get('/accepted', async (req, res) => {
   try {
@@ -76,19 +97,21 @@ router.patch('/rejectWord/:id/:index', async (req, res) => {
       return res.status(404).json({ message: 'Word not found' });
     }
 
-    word.englishWords.splice(index, 1); // Remove the rejected English word
-    word.status.splice(index, 1); // Remove the status corresponding to the rejected word
+    // Remove the rejected English word and corresponding status
+    word.englishWords.splice(index, 1);
+    word.status.splice(index, 1);
 
     if (word.englishWords.length === 0) {
       // If all English words are rejected, delete the Sinhala word
       await SinhalaDictionary.findByIdAndDelete(id);
-      return res.status(200).json({ message: 'All words rejected; Sinhala word deleted' });
+      return res.status(200).json({ message: 'All words rejected; Sinhala word deleted successfully' });
+    } else {
+      // Otherwise, save the updated Sinhala word
+      await word.save();
+      return res.status(200).json({ message: 'English word rejected successfully', word });
     }
-
-    await word.save();
-    res.status(200).json({ message: 'Word rejected successfully' });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Server error', error });
   }
 });
 

@@ -18,9 +18,12 @@ const SinhalaDictionary = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [hover, setHover] = useState(false);
   const [acceptedWords, setAcceptedWords] = useState([]);
 
   useEffect(() => {
+    fetchWords();
     fetchAcceptedWords();
   }, []);
 
@@ -57,18 +60,27 @@ const SinhalaDictionary = () => {
     generatePDF(title, columns, data, fileName);
   };  
   
-  useEffect(() => {
-    const fetchWords = async () => {
+  const fetchWords = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/sinhala-dictionary/getWords');
         setWords(response.data);
       } catch (error) {
         console.error("Error fetching words:", error);
       }
-    };
+  };
 
-    fetchWords();
-  }, []);
+  const handleSearch = async (event) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    try {
+      const response = await axios.get('http://localhost:5000/api/sinhala-dictionary/search', {
+        params: { query }
+      });
+      setWords(response.data);
+    } catch (error) {
+      console.error('Error searching words:', error);
+    }
+  };
 
   const handleAccept = async (id, index) => {
     try {
@@ -197,11 +209,29 @@ const SinhalaDictionary = () => {
             <IoMdAddCircleOutline className="mb-1" /> Add Word
           </Button>
         </Link>
-          <Button className="btn-danger" onClick={downloadAcceptedWordsPDF} style={{backgroundColor:'green', borderColor:'green'}}>
+          <Button
+            className="btn-danger"
+            onClick={downloadAcceptedWordsPDF}
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+            style={{
+              backgroundColor: hover ? '#3ca341' : 'green',
+              borderColor: hover ? '#3ca341' : 'green'
+            }}
+          >
             <IoMdDownload className="mb-1" /> <span>Download Accepted Words</span>
           </Button>
-
       </div><br/>
+      <div className="d-flex justify-content-between align-items-center mb-4" style={{ width: '800px' }}>
+      {/* Search bar */}
+      <Form.Control
+          type="text"
+          placeholder="Search by Sinhala word, English word, or status..."
+          value={searchQuery}
+          onChange={handleSearch}
+        />
+      </div>
+      <br />
 
       <Table bordered hover className="table-bordered" style={{ backgroundColor: "#f9f9f9", borderRadius: "10px", overflow: "hidden", border: "2px solid black", width: "100%", tableLayout: "fixed" }}>
         <thead>

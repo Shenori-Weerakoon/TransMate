@@ -3,6 +3,7 @@ import "jspdf-autotable";
 import { successMessage } from "./Alert";
 import APPLOGO from "../assets/TransMate.png";
 
+
 export function generatePDF(title, columns, data, fileName) {
   const doc = new jsPDF({
     orientation: "portrait",
@@ -37,7 +38,7 @@ export function generatePDF(title, columns, data, fileName) {
   };
 
   // Add the logo and title to the header of the PDF
-  doc.addImage(APPLOGO, "PNG", 15, 10, 30, 30);
+  doc.addImage(APPLOGO, "PNG", 10, 5, 20, 20);
   doc.setFontSize(18);
   doc.setTextColor(0, 0, 0);
   doc.text(title, 105, 15, { align: "center" });
@@ -49,7 +50,7 @@ export function generatePDF(title, columns, data, fileName) {
     doc.setFont("helvetica");
     doc.setFontSize(10);
     doc.text(
-      `Emerald Bay Restaurant`,
+      `TransMate Translator App`,
       doc.internal.pageSize.getWidth() / 2,
       doc.internal.pageSize.getHeight() - 10,
       { align: "center" }
@@ -71,7 +72,7 @@ export function generatePDF(title, columns, data, fileName) {
     startY: 40,
     didDrawPage: function (data) {
       if (data.pageNumber === 1) {
-        doc.addImage(APPLOGO, "PNG", 15, 10, 30, 30);
+        doc.addImage(APPLOGO, "PNG", 10, 5, 20, 20);
         doc.setFontSize(18);
         doc.setTextColor(0, 0, 0);
         doc.text(title, 105, 15, { align: "center" });
