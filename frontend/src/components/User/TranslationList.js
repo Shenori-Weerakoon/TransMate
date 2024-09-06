@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import EditTranslationForm from './EditTranslationForm';
 import NavBar from '../Home/Navbar';
+import "./translator.css";
 
 
 const TranslationList = () => {
