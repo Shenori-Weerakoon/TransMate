@@ -20,6 +20,8 @@ const sinhalaDictionarySchema = new mongoose.Schema({
     type: [String],
     default: ['pending', 'pending', 'pending']
   }
+}, {
+  timestamps: true,
 });
 
 const SinhalaDictionary = mongoose.model('SinhalaDictionary', sinhalaDictionarySchema);
