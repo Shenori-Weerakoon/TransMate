@@ -128,14 +128,14 @@ const Translator = () => {
       </div>
       <div className="translation-section">
         <textarea
-          className="input-text"
+          className="feature-box"
           placeholder={`Enter something in ${fromLanguage}...`}
           value={text}
           onChange={(e) => setText(e.target.value)}
           // style={{width:'400px'}}
         />
         <textarea
-          className="output-text"
+          className="feature-box"
           placeholder={`Translating to ${toLanguage}...`}
           value={translatedText}
           readOnly
@@ -143,7 +143,7 @@ const Translator = () => {
           
         />
       </div>
-      <button className="translate-button" onClick={handleTranslate} style={{width:'25%'}}>
+      <button className="translate-button" onClick={handleTranslate}>
         Translate
       </button>
 
