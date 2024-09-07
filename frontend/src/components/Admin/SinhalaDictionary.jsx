@@ -17,10 +17,10 @@ const SinhalaDictionary = () => {
   const [validated, setValidated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [hover, setHover] = useState(false);
   const [acceptedWords, setAcceptedWords] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchWords();
@@ -159,13 +159,24 @@ const SinhalaDictionary = () => {
       setValidated(true);
       return;
     }
-
+  
     setLoading(true);
     try {
-      const response = await axios.put(`http://localhost:5000/api/sinhala-dictionary/updateWord/${editWord.id}`, editWord);
+      // Prepare the updated word object with new status set to "pending"
+      const updatedWord = {
+        ...editWord,
+        status: editWord.englishWords.map(() => 'pending') // Reset all statuses to "pending"
+      };
+  
+      // Send the update request to the backend
+      const response = await axios.put(`http://localhost:5000/api/sinhala-dictionary/updateWord/${editWord.id}`, updatedWord);
+  
+      // Update the local state with the new word data
       setWords(prevWords =>
-        prevWords.map(word => word._id === editWord.id ? response.data.word : word)
+        prevWords.map(word => (word._id === editWord.id ? response.data.word : word))
       );
+  
+      // Clear form and close modal
       setEditWord({ id: "", sinhalaWord: "", englishWords: ["", "", ""] });
       setValidated(false);
       handleCloseEditWordModal();
@@ -174,24 +185,21 @@ const SinhalaDictionary = () => {
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   const handleEnglishWordChange = (wordType, index, value) => {
-    if (wordType === 'newWord') {
-      setNewWord(prevState => {
-        const updatedWords = [...prevState.englishWords];
-        updatedWords[index] = value;
-        return { ...prevState, englishWords: updatedWords };
-      });
-    } else if (wordType === 'editWord') {
+    if (wordType === 'editWord') {
       setEditWord(prevState => {
-        const updatedWords = [...prevState.englishWords];
-        updatedWords[index] = value;
-        return { ...prevState, englishWords: updatedWords };
+        const updatedEnglishWords = [...prevState.englishWords];
+        updatedEnglishWords[index] = value;
+        return {
+          ...prevState,
+          englishWords: updatedEnglishWords
+        };
       });
     }
   };
-
+  
   const validateForm = (data) => {
     const errors = {};
     if (!data.sinhalaWord.trim()) errors.sinhalaWord = "Sinhala word is required";
@@ -309,38 +317,38 @@ const SinhalaDictionary = () => {
           <Modal.Title>Edit Word</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form noValidate validated={validated} onSubmit={handleEditWord}>
-            <Form.Group className="mb-3" controlId="sinhalaWord">
-              <Form.Label>Sinhala Word</Form.Label>
+        <Form noValidate validated={validated} onSubmit={handleEditWord}>
+          <Form.Group className="mb-3" controlId="sinhalaWord">
+            <Form.Label>Sinhala Word</Form.Label>
+            <Form.Control
+              type="text"
+              value={editWord.sinhalaWord}
+              onChange={(e) => setEditWord(prevState => ({ ...prevState, sinhalaWord: e.target.value }))}
+              required
+              isInvalid={!!errors.sinhalaWord}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.sinhalaWord}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          {editWord.englishWords.map((englishWord, index) => (
+            <Form.Group className="mb-3" controlId={`englishWord${index}`} key={index}>
+              <Form.Label>English Word {index + 1}</Form.Label>
               <Form.Control
                 type="text"
-                value={editWord.sinhalaWord}
-                onChange={(e) => setEditWord(prevState => ({ ...prevState, sinhalaWord: e.target.value }))}
-                required
-                isInvalid={!!errors.sinhalaWord}
+                value={englishWord}
+                onChange={(e) => handleEnglishWordChange('editWord', index, e.target.value)}
+                required={index === 0}
+                isInvalid={index === 0 && !!errors.englishWords}
               />
-              <Form.Control.Feedback type="invalid">
-                {errors.sinhalaWord}
-              </Form.Control.Feedback>
+              {index === 0 && (
+                <Form.Control.Feedback type="invalid">
+                  {errors.englishWords}
+                </Form.Control.Feedback>
+              )}
             </Form.Group>
-
-            {editWord.englishWords.map((englishWord, index) => (
-              <Form.Group className="mb-3" controlId={`englishWord${index}`} key={index}>
-                <Form.Label>English Word {index + 1}</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={englishWord}
-                  onChange={(e) => handleEnglishWordChange('editWord', index, e.target.value)}
-                  required={index === 0}
-                  isInvalid={index === 0 && !!errors.englishWords}
-                />
-                {index === 0 && (
-                  <Form.Control.Feedback type="invalid">
-                    {errors.englishWords}
-                  </Form.Control.Feedback>
-                )}
-              </Form.Group>
-            ))}
+          ))}
 
             <div className="d-flex justify-content-between">
               <Button variant="secondary" onClick={handleCloseEditWordModal}>

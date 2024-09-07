@@ -44,18 +44,19 @@ router.get('/search', async (req, res) => {
   const { query } = req.query;
 
   try {
-    const regex = new RegExp(query, 'i'); // Case-insensitive search
+    const regex = new RegExp(query, 'i'); 
 
     const words = await SinhalaDictionary.find({
       $or: [
-        { sinhalaWord: regex }, // Match Sinhala word
-        { englishWords: { $elemMatch: { $regex: regex } } }, // Match any English word
-        { status: { $elemMatch: { $regex: regex } } } // Match status
+        { sinhalaWord: regex }, 
+        { englishWords: { $elemMatch: { $regex: regex } } }, 
+        { status: { $elemMatch: { $regex: regex } } } 
       ]
     });
 
     res.status(200).json(words);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Server error', error });
   }
 });
@@ -131,7 +132,6 @@ router.delete('/deleteWord/:id', async (req, res) => {
   }
 });
 
-// Update a word
 router.put('/updateWord/:id', async (req, res) => {
   const { id } = req.params;
   const { sinhalaWord, englishWords } = req.body;
@@ -150,7 +150,7 @@ router.put('/updateWord/:id', async (req, res) => {
 
     word.sinhalaWord = sinhalaWord;
     word.englishWords = filteredEnglishWords;
-    word.status = filteredEnglishWords.map(() => 'pending'); 
+    word.status = filteredEnglishWords.map(() => 'pending'); // Reset status to pending
 
     await word.save();
     res.status(200).json({ message: 'Word updated successfully', word });
