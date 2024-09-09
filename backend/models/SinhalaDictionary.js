@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 const sinhalaDictionarySchema = new mongoose.Schema({
   sinhalaWord: {
     type: String,
@@ -8,15 +7,21 @@ const sinhalaDictionarySchema = new mongoose.Schema({
     unique: true,
   },
   englishWords: {
-    type: [String], // Array of English words
+    type: [String],
     required: true,
     validate: {
-      validator: function(array) {
+      validator: function (array) {
         return array.length >= 1 && array.length <= 3;
       },
       message: 'You must provide between 1 and 3 English words'
     }
+  },
+  status: {
+    type: [String],
+    default: ['pending', 'pending', 'pending']
   }
+}, {
+  timestamps: true,
 });
 
 const SinhalaDictionary = mongoose.model('SinhalaDictionary', sinhalaDictionarySchema);

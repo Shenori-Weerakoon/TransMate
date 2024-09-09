@@ -50,6 +50,11 @@ function NavBar({ isAuthenticated, user, logout }) {
                 Dictionary
               </Nav.Link>
             </LinkContainer>
+            <LinkContainer to="/translationList">
+              <Nav.Link className="nav-link-custom">
+                History
+              </Nav.Link>
+            </LinkContainer>
             <LinkContainer to="/login">
               <Nav.Link className="nav-link-custom login-link">
                 Login

@@ -238,7 +238,7 @@ const translateText = async (req, res) => {
     if (from === 'en') { // Perform grammar check only if the original text is in English
       const grammarResponse = await axios.post('https://api.languagetool.org/v2/check', null, {
         params: {
-          text,
+          text: translatedText, // Check the translated text
           language: 'en-US'
         },
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
@@ -252,6 +252,13 @@ const translateText = async (req, res) => {
         offset: match.offset,
         length: match.length
       }));
+
+      // Highlight grammar errors in the translated text
+      grammarErrors.forEach(error => {
+        const errorText = translatedText.substring(error.offset, error.offset + error.length);
+        const suggestions = error.replacements.join(', ');
+        translatedText = translatedText.replace(errorText, `[${errorText} (Suggestions: ${suggestions})]`);
+      });
     }
 
     // Save the translation in your database (optional)
@@ -276,5 +283,47 @@ const translateText = async (req, res) => {
   }
 };
 
-module.exports = { translateText };
+const getTranslations = async (req, res) => {
+  try {
+    const translations = await Translation.find();
+    console.log('Fetched Translations:', translations);
+    res.json(translations);
+  } catch (error) {
+    console.error('Error fetching translations:', error.message);
+    res.status(500).json({ message: 'Failed to fetch translations' });
+  }
+};
+
+// Update translation
+const updateTranslation = async (req, res) => {
+  const { id } = req.params;
+  const { text, translatedText } = req.body;
+
+  try {
+    const updatedTranslation = await Translation.findByIdAndUpdate(
+      id,
+      { text, translatedText },
+      { new: true }
+    );
+    res.json(updatedTranslation);
+  } catch (error) {
+    console.error('Error updating translation:', error.message);
+    res.status(500).json({ message: 'Failed to update translation' });
+  }
+};
+
+// Delete translation
+const deleteTranslation = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await Translation.findByIdAndDelete(id);
+    res.json({ message: 'Translation deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting translation:', error.message);
+    res.status(500).json({ message: 'Failed to delete translation' });
+  }
+};
+
+module.exports = { translateText, getTranslations, updateTranslation, deleteTranslation };
 
