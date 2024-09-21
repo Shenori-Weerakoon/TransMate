@@ -4,9 +4,6 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const translateRoutes = require('./routes/translateRoutes');
 const sinhalaDictionaryRoutes = require('./routes/SinhalaDictionaryRoutes');
-const phrasebookRoutes = require('./routes/phrasebookRoutes.js');
-const userRoutes = require ('./routes/userRoutes.js')
-
 
 dotenv.config();
 
@@ -19,9 +16,6 @@ app.use(express.json());
 
 app.use('/api', translateRoutes);
 app.use('/api/sinhala-dictionary', sinhalaDictionaryRoutes);
-app.use('/phrasebook', phrasebookRoutes); 
-app.use('/user', userRoutes); 
-
 
 const PORT = process.env.PORT || 5000;
 
