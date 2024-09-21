@@ -58,7 +58,7 @@ function Dictionary() {
           <h2>
             {data.word}
             {data.phonetics[0] && (
-              <button onClick={playAudio}>
+              <button onClick={playAudio} style={{width:'50px'}}>
                 <FcSpeaker size="26px" />
               </button>
             )}

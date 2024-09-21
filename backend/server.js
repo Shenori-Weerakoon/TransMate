@@ -5,6 +5,11 @@ const connectDB = require('./config/db');
 const translateRoutes = require('./routes/translateRoutes');
 const sinhalaDictionaryRoutes = require('./routes/SinhalaDictionaryRoutes');
 
+
+const userRoutes = require ('./routes/userRoutes.js')
+
+
+
 dotenv.config();
 
 connectDB();

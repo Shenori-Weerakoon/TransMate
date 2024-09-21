@@ -166,9 +166,9 @@ const { v4: uuidv4 } = require('uuid');
 const Translation = require('../models/translation');
 const SinhalaDictionary = require('../models/SinhalaDictionary');
 
-const key = 'b8112fb382d14dd38409fb9fc4cfbb3e'; // Your API key
+const key = 'b8112fb382d14dd38409fb9fc4cfbb3e'; //  API key
 const endpoint = 'https://api.cognitive.microsofttranslator.com'; // Microsoft Translator endpoint
-const location = 'eastasia'; // Your Azure region
+const location = 'eastasia'; //  Azure region
 
 const translateText = async (req, res) => {
   const { text, from, to } = req.body;
