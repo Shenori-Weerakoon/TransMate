@@ -143,51 +143,10 @@ const SinhalaDictionary = () => {
   const handleShowAddWordModal = () => setShowAddWordModal(true);
 
   const handleShowEditWordModal = (word) => {
-    setEditWord(word);
-    setShowEditWordModal(true);
+    navigate(`/editDictionary/${word._id}`);
   };
-
-  const handleCloseEditWordModal = () => setShowEditWordModal(false);
-
-  const handleEditWord = async (event) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const errorsObj = validateForm(editWord);
-    if (form.checkValidity() === false) {
-      event.stopPropagation();
-      setErrors(errorsObj);
-      setValidated(true);
-      return;
-    }
   
-    setLoading(true);
-    try {
-      // Prepare the updated word object with new status set to "pending"
-      const updatedWord = {
-        ...editWord,
-        status: editWord.englishWords.map(() => 'pending') // Reset all statuses to "pending"
-      };
-  
-      // Send the update request to the backend
-      const response = await axios.put(`http://localhost:5000/api/sinhala-dictionary/updateWord/${editWord.id}`, updatedWord);
-  
-      // Update the local state with the new word data
-      setWords(prevWords =>
-        prevWords.map(word => (word._id === editWord.id ? response.data.word : word))
-      );
-  
-      // Clear form and close modal
-      setEditWord({ id: "", sinhalaWord: "", englishWords: ["", "", ""] });
-      setValidated(false);
-      handleCloseEditWordModal();
-    } catch (error) {
-      console.error("Error updating word:", error);
-    } finally {
-      setLoading(false);
-    }
-  };  
-
-  const handleEnglishWordChange = (wordType, index, value) => {
+  /*const handleEnglishWordChange = (wordType, index, value) => {
     if (wordType === 'editWord') {
       setEditWord(prevState => {
         const updatedEnglishWords = [...prevState.englishWords];
@@ -198,7 +157,7 @@ const SinhalaDictionary = () => {
         };
       });
     }
-  };
+  };*/
   
   const validateForm = (data) => {
     const errors = {};
@@ -248,13 +207,13 @@ const SinhalaDictionary = () => {
             <th style={{ padding: "10px", width: "10%" }}>Edit/Delete</th>
             <th style={{ padding: "5px", width: "15%" }}>English Word 1</th>
             <th style={{ padding: "6px", width: "10%" }}>Status</th>
-            <th style={{ padding: "0px", width: "10%" }}>Action</th>
+            <th style={{ padding: "1px", width: "10%" }}>Action</th>
             <th style={{ padding: "5px", width: "15%" }}>English Word 2</th>
             <th style={{ padding: "6px", width: "10%" }}>Status</th>
-            <th style={{ padding: "0px", width: "10%" }}>Action</th>
+            <th style={{ padding: "1px", width: "10%" }}>Action</th>
             <th style={{ padding: "5px", width: "15.5%" }}>English Word 3</th>
             <th style={{ padding: "6px", width: "10%" }}>Status</th>
-            <th style={{ padding: "0px", width: "10%" }}>Action</th>
+            <th style={{ padding: "1px", width: "10%" }}>Action</th>
           </tr>
         </thead>
         <tbody align="center" style={{ backgroundColor: "#e9ecef", fontSize: "12px" }}>
@@ -263,19 +222,16 @@ const SinhalaDictionary = () => {
               <td style={{ padding: "5px", verticalAlign: "middle" }}>{word.sinhalaWord}</td>
               <td style={{ padding: '0px', verticalAlign: 'middle' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <Button
-                    variant="warning"
-                    onClick={() => handleShowEditWordModal(word)}
-                    style={{ marginRight: '5px', backgroundColor: '#f0ad4e', borderColor: '#eea236' }}
-                  >
-                    <FaEdit style={{ marginRight: '1px' }} />
+                  <Button variant="warning" onClick={() => handleShowEditWordModal(word)}
+                    style={{ backgroundColor: '#f0ad4e', borderColor: '#eea236', marginRight: '2px' }}>
+                    <FaEdit />
                   </Button>
                   <Button
                     variant="danger"
                     onClick={() => handleDelete(word._id)}
                     style={{ backgroundColor: '#d9534f', borderColor: '#d43f3a' }}
                   >
-                    <FaTrash style={{ marginRight: '0px' }} />
+                    <FaTrash style={{ marginLeft: '0px' }} />
                   </Button>
                   {/*<Button
                     variant="success"
@@ -311,7 +267,7 @@ const SinhalaDictionary = () => {
         </tbody>
       </Table>
 
-      {/* Edit Word Modal */}
+      {/* Edit Word Moda
       <Modal show={showEditWordModal} onHide={handleCloseEditWordModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>Edit Word</Modal.Title>
@@ -360,7 +316,7 @@ const SinhalaDictionary = () => {
             </div>
           </Form>
         </Modal.Body>
-      </Modal>
+      </Modal>*/}
     </div>
   );
 };
