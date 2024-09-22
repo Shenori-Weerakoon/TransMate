@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const SinhalaDictionary = require('../models/SinhalaDictionary');
 
+
 // Add a new word
 router.post('/addWord', async (req, res) => {
   const { sinhalaWord, englishWords } = req.body;
@@ -132,30 +133,56 @@ router.delete('/deleteWord/:id', async (req, res) => {
   }
 });
 
-router.put('/updateWord/:id', async (req, res) => {
-  const { id } = req.params;
-  const { sinhalaWord, englishWords } = req.body;
-
-  const filteredEnglishWords = englishWords.filter(word => word.trim() !== '');
-
-  if (!sinhalaWord || filteredEnglishWords.length === 0) {
-    return res.status(400).json({ message: 'Sinhala word and at least one English word are required' });
-  }
-
+// Get a specific word by ID
+router.get('/getWord/:id', async (req, res) => {
   try {
-    const word = await SinhalaDictionary.findById(id);
+    const word = await SinhalaDictionary.findById(req.params.id);
     if (!word) {
       return res.status(404).json({ message: 'Word not found' });
     }
-
-    word.sinhalaWord = sinhalaWord;
-    word.englishWords = filteredEnglishWords;
-    word.status = filteredEnglishWords.map(() => 'pending'); // Reset status to pending
-
-    await word.save();
-    res.status(200).json({ message: 'Word updated successfully', word });
+    res.status(200).json(word);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    console.error('Error fetching word:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Update a word
+router.put('/updateWord/:id', async (req, res) => {
+  const { sinhalaWord, englishWords } = req.body;
+
+  // Validate that the Sinhala word is not empty
+  if (!sinhalaWord) {
+    return res.status(400).json({ message: 'Sinhala word is required' });
+  }
+
+  // Filter out empty English words
+  const filteredEnglishWords = englishWords.filter(word => word.trim() !== '');
+
+  if (filteredEnglishWords.length === 0) {
+    return res.status(400).json({ message: 'At least one English word is required' });
+  }
+
+  try {
+    // Set the status of all English words to 'pending'
+    const updatedWord = await SinhalaDictionary.findByIdAndUpdate(
+      req.params.id,
+      {
+        sinhalaWord,
+        englishWords: filteredEnglishWords,
+        status: filteredEnglishWords.map(() => 'pending')  // Set all statuses to 'pending'
+      },
+      { new: true }
+    );
+
+    if (!updatedWord) {
+      return res.status(404).json({ message: 'Word not found' });
+    }
+
+    res.json(updatedWord);
+  } catch (error) {
+    console.error("Error updating word:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
