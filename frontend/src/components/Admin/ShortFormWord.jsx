@@ -12,6 +12,7 @@ export default function ShortFormWord() {
   const [showAddWordForm, setShowAddWordForm] = useState(false);
   const [newWord, setNewWord] = useState({ shortForm: '', fullForm: '', status: 'pending' });
   const [currentWordId, setCurrentWordId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Fetch all short form words from API
   useEffect(() => {
@@ -74,6 +75,12 @@ export default function ShortFormWord() {
     }
   };
 
+  // Filtered words based on search term
+  const filteredWords = words.filter(word => 
+    word.shortForm.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    word.fullForm.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="container mt-5" style={{ paddingLeft: "0px" }}>
       <h1 className="mb-5 text-center" style={{ color: 'darkcyan' }}>Short Form Words</h1>
@@ -103,6 +110,8 @@ export default function ShortFormWord() {
         <Form.Control
           type="text"
           placeholder="Search by short form or full form..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
@@ -116,7 +125,7 @@ export default function ShortFormWord() {
           </tr>
         </thead>
         <tbody align="center" style={{ backgroundColor: "#e9ecef", fontSize: "12px" }}>
-          {words.map(word => (
+          {filteredWords.map(word => (
             <tr key={word.shortForm}>
               <td style={{ padding: "5px", verticalAlign: "middle" }}>{word.shortForm}</td>
               <td style={{ padding: "5px", verticalAlign: "middle" }}>{word.fullForm}</td>
