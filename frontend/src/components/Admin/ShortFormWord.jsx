@@ -31,6 +31,7 @@ export default function ShortFormWord() {
     try {
       const response = await axios.post('http://localhost:5000/words/shortforms', newWord);
       setWords([...words, response.data.data]); // Add new word to the list
+      setNewWord({ shortForm: '', fullForm: '', status: 'pending' });
       setShowAddWordForm(false); // Hide the form after submission
     } catch (error) {
       console.error('Error adding short form word:', error);
