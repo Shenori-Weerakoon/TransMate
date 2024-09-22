@@ -1,15 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Table, Modal, Form } from "react-bootstrap";
 import { IoMdAddCircleOutline, IoMdCheckmarkCircleOutline, IoMdCloseCircleOutline, IoMdDownload } from "react-icons/io";
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { generatePDF } from "../../utils/GeneratePDF";
 import './AddToDictionary.css';
 
 export default function ShortFormWord() {
   const [words, setWords] = useState([]);
   const [hover, setHover] = useState(false);
+  const [showAddWordModal, setShowAddWordModal] = useState(false); // Modal visibility state
+  const [newWord, setNewWord] = useState({ shortForm: '', fullForm: '', status: 'pending' }); // Form data state
 
   // Fetch short form words from API
   useEffect(() => {
@@ -25,62 +26,52 @@ export default function ShortFormWord() {
     fetchShortFormWords();
   }, []);
 
-  // Accept short form word status
-  const handleAccept = async (wordId) => {
-    // Logic to update status to 'accepted' (e.g., using axios to call API)
-  };
-
-  // Reject short form word status
-  const handleReject = async (wordId) => {
-    // Logic to update status to 'rejected' (e.g., using axios to call API)
-  };
-
-  // Delete short form word
-  const handleDelete = async (wordId) => {
-    // Logic to delete the word (e.g., using axios to call API)
-  };
-
-  // Edit word modal handler
-  const handleShowEditWordModal = (word) => {
-    // Logic to show modal and edit word
+  // Handle Add Word Form submission
+  const handleAddWord = async () => {
+    try {
+      const response = await axios.post('http://localhost:5000/words/shortforms', newWord); // API call to add word
+      setWords([...words, response.data.data]); // Add new word to the list
+      setShowAddWordModal(false); // Close modal
+    } catch (error) {
+      console.error('Error adding short form word:', error);
+    }
   };
 
   return (
     <div className="container mt-5" style={{ paddingLeft: "0px" }}>
       <h1 className="mb-5 text-center" style={{color:'darkcyan'}}>Short Form Words</h1>
 
-
       <div className="d-flex justify-content-between align-items-center mb-4" style={{display:'flex'}}>
-        <Link to="/AddToDictionary">
-          <Button variant="primary" /*onClick={handleShowAddWordModal}*/ style={{width:'200px', marginRight:'100px'}}>
-            <IoMdAddCircleOutline className="mb-1" /> Add Word
-          </Button>
-        </Link>
-          <Button
-            className="btn-danger"
-            //onClick={downloadAcceptedWordsPDF}
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
-            style={{
-              backgroundColor: hover ? '#3ca341' : 'green',
-              borderColor: hover ? '#3ca341' : 'green',
-              width:'200px',marginLeft:'-50px',marginRight:'100px'
-              
-            }}
-          >
-            <IoMdDownload className="mb-1" /> <span>Download</span>
-          </Button>
-          <div className="d-flex justify-content-between align-items-center mb-4" style={{ width: '800px' }}>
-      {/* Search bar */}
-      <Form.Control
-          type="text"
-          placeholder="Search by Sinhala word, English word, or status..."
-          //value={searchQuery}
-          //onChange={handleSearch}
-        />
+        <Button 
+          variant="primary" 
+          onClick={() => setShowAddWordModal(true)} // Show modal on click
+          style={{width:'200px', marginRight:'100px'}}
+        >
+          <IoMdAddCircleOutline className="mb-1" /> Add Word
+        </Button>
+
+        <Button
+          className="btn-danger"
+          //onClick={downloadAcceptedWordsPDF}
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+          style={{
+            backgroundColor: hover ? '#3ca341' : 'green',
+            borderColor: hover ? '#3ca341' : 'green',
+            width:'200px', marginLeft:'-50px', marginRight:'100px'
+          }}
+        >
+          <IoMdDownload className="mb-1" /> <span>Download</span>
+        </Button>
+
+        <div className="d-flex justify-content-between align-items-center mb-4" style={{ width: '800px' }}>
+          {/* Search bar */}
+          <Form.Control
+            type="text"
+            placeholder="Search by Sinhala word, English word, or status..."
+          />
+        </div>
       </div>
-      </div><br/>
-      
 
       <Table bordered hover className="table-bordered" style={{ backgroundColor: "#f9f9f9", borderRadius: "10px", overflow: "hidden", border: "2px solid black", width: "100%", tableLayout: "fixed" }}>
         <thead>
@@ -96,7 +87,7 @@ export default function ShortFormWord() {
             <tr key={word._id}>
               <td style={{ padding: "5px", verticalAlign: "middle" }}>{word.shortForm}</td>
               <td style={{ padding: "5px", verticalAlign: "middle" }}>{word.fullForm}</td>
-              <td style={{ padding: "5px", verticalAlign: "middle" }}>{word.status || ''}</td> {/* Directly display status if it's not an array */}
+              <td style={{ padding: "5px", verticalAlign: "middle" }}>{word.status || ''}</td>
               <td style={{ padding: "0px", verticalAlign: "middle" }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   {word.status !== "accepted" && word.status !== "" && (
@@ -112,7 +103,7 @@ export default function ShortFormWord() {
                   <Button
                     variant="warning"
                     onClick={() => handleShowEditWordModal(word)}
-                    style={{ marginRight: '5px', backgroundColor: '#f0ad4e', borderColor: '#eea236',marginLeft:'5px' }}
+                    style={{ marginRight: '5px', backgroundColor: '#f0ad4e', borderColor: '#eea236', marginLeft:'5px' }}
                   >
                     <FaEdit style={{ marginRight: '1px' }} />
                   </Button>
@@ -129,6 +120,55 @@ export default function ShortFormWord() {
           ))}
         </tbody>
       </Table>
+
+      {/* Modal for adding new word */}
+      <Modal show={showAddWordModal} onHide={() => setShowAddWordModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add New Word</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group>
+              <Form.Label>Short Form</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter short form"
+                value={newWord.shortForm}
+                onChange={(e) => setNewWord({ ...newWord, shortForm: e.target.value })}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Full Form</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter full form"
+                value={newWord.fullForm}
+                onChange={(e) => setNewWord({ ...newWord, fullForm: e.target.value })}
+              />
+            </Form.Group>
+            {/* <Form.Group>
+              <Form.Label>Status</Form.Label>
+              <Form.Control
+                as="select"
+                value={newWord.status}
+                onChange={(e) => setNewWord({ ...newWord, status: e.target.value })}
+              >
+                <option value="pending">Pending</option>
+                <option value="accepted">Accepted</option>
+                <option value="rejected">Rejected</option>
+              </Form.Control>
+            </Form.Group> */}
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowAddWordModal(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleAddWord}>
+            Save Word
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
