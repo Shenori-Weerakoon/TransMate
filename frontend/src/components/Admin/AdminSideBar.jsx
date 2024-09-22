@@ -4,10 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import SinhalaDictionary from './SinhalaDictionary.jsx';
 import AdminDashboard from './AdminDashboard.jsx';
 //import AddToDictionary from './AddToDictionary.jsx';
+import ShortFormWord from "./ShortFormWord.jsx";
 
 
 const AdminSideBar = () => {
-  const [activeContent, setActiveContent] = useState("Dashboard");
+  const [activeContent, setActiveContent] = useState("SinhalaDictionary");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const navigate = useNavigate();
 
@@ -114,6 +115,19 @@ const AdminSideBar = () => {
                 Sinhala Dictionary
               </a>
             </li>
+            <li>
+              <a
+                href="#ShortFormWord"
+                style={
+                  activeContent === "ShortFormWord"
+                    ? { ...sidebarStyles.link, ...sidebarStyles.activeLink }
+                    : sidebarStyles.link
+                }
+                onClick={() => handleLinkClick("ShortFormWord")}
+              >
+                Short Form Word
+              </a>
+            </li>
             {/*<li>
               <a
                 href="#AddToDictionary"
@@ -136,7 +150,8 @@ const AdminSideBar = () => {
       </div>
       <div style={sidebarStyles.content}>
         {activeContent === "Dashboard" && <AdminDashboard />}
-        {activeContent === "SinhalaDictionary" && <SinhalaDictionary />}
+        {activeContent === "SinhalaDictionary" && <SinhalaDictionary />} 
+        {activeContent === "ShortFormWord" && <ShortFormWord />} 
       </div>
     </div>
   );
