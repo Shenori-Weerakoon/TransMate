@@ -12,6 +12,7 @@ import AddToDictionary from '../components/Admin/AddToDictionary';
 import TranslationList from '../components/User/TranslationList';
 import EditTranslationForm from '../components/User/EditTranslationForm';
 
+import ShortFormWord from '../components/Admin/ShortFormWord';
 
 const AppRoutes = () => {
   return (
@@ -26,7 +27,8 @@ const AppRoutes = () => {
                 <Route path="/SinhalaDictionary" element={<SinhalaDictionary />} />             
                 <Route path="/AddToDictionary" element={<AddToDictionary />} />
                 <Route path="/translationList" element={<TranslationList />} /> 
-                <Route path="/translationForm" element={<EditTranslationForm />} />                    
+                <Route path="/translationForm" element={<EditTranslationForm />} />                     
+                <Route path="/shortForm" element={<ShortFormWord />} />                     
             </Routes>
         </Router>
     </>
