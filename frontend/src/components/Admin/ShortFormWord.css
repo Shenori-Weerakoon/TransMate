@@ -1,0 +1,17 @@
+/* AddToDictionary.css */
+.overflow-form {
+    position: fixed; /* Ensures the form stays above other content */
+    top: 50%; /* Adjust to center or place as needed */
+    left: 50%; /* Adjust to center or place as needed */
+    transform: translate(-50%, -50%); /* Centering the form */
+    width: 300px; /* Set the desired width */
+    max-height: 400px; /* Set max height */
+    overflow-y: auto; /* Make it scrollable if content overflows */
+    z-index: 1050; /* Ensure it stays above table and other content */
+    background-color: white; /* Give it a background */
+    border: 1px solid #000000; /* Optional: Add a border */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better visibility */
+    padding: 20px; /* Add some padding */
+    border-radius: 8px; /* Optional: Add rounded corners */
+  }
+  
