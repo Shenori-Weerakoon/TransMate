@@ -4,7 +4,7 @@ import { IoMdAddCircleOutline, IoMdDownload, IoMdCloseCircleOutline, IoMdCheckma
 import { MdCancel } from "react-icons/md";
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import axios from "axios";
-import './AddToDictionary.css'; // Import your CSS file for styling
+import { generatePDF } from "../../utils/GenerateSFW";
 
 export default function ShortFormWord() {
   const [words, setWords] = useState([]);
@@ -50,6 +50,21 @@ export default function ShortFormWord() {
     }
   };
 
+  // Prepare data for PDF download
+  const prepareAcceptedWordsPDFData = (words) => {
+    const title = "Accepted Short Form Words";
+    const columns = ["Short Form", "Full Form", "Status"];
+    const data = words.map(word => [word.shortForm, word.fullForm, word.status]);
+    const fileName = "accepted_short_forms.pdf";
+    return { title, columns, data, fileName };
+  };
+
+  const downloadAcceptedWordsPDF = () => {
+    const { title, columns, data, fileName } = prepareAcceptedWordsPDFData(filteredWords);
+    console.log('PDF Data:', data); // Log data to inspect its structure
+    generatePDF(title, columns, data, fileName);
+  };
+  
   const handleEditWord = (word) => {
     setNewWord({ shortForm: word.shortForm, fullForm: word.fullForm, status: word.status });
     setCurrentWordId(word.shortForm);
@@ -96,6 +111,7 @@ export default function ShortFormWord() {
 
         <Button
           className="btn-danger"
+          onClick={downloadAcceptedWordsPDF}
           onMouseEnter={() => setHover(true)}
           onMouseLeave={() => setHover(false)}
           style={{
