@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import NavBar from './Navbar';
 import '../Home/main.css';
-import shortFormDictionary from './shortForms';  // Import the short form dictionary
 
 const Translator = () => {
   const [text, setText] = useState('');
@@ -11,12 +10,35 @@ const Translator = () => {
   const [fromLanguage, setFromLanguage] = useState('si');
   const [toLanguage, setToLanguage] = useState('en');
   const [grammarErrors, setGrammarErrors] = useState([]);
+  const [shortFormDictionary, setShortFormDictionary] = useState({});
+
+  // Fetch the accepted short forms from the provided API when component loads
+  useEffect(() => {
+    const fetchShortForms = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/words/accepted/shortforms');
+        const acceptedShortForms = {};
+
+        response.data.data.forEach((entry) => {
+          acceptedShortForms[entry.shortForm] = entry.fullForm;  // Only map approved short forms
+        });
+
+        setShortFormDictionary(acceptedShortForms);
+      } catch (error) {
+        console.error('Error fetching short forms:', error);
+      }
+    };
+
+    if (fromLanguage === 'en') {
+      fetchShortForms(); // Only fetch when translating from English
+    }
+  }, [fromLanguage]);
 
   // Function to correct short forms
   const correctShortForms = (inputText) => {
     let correctedText = inputText;
 
-    // Replace short forms in the text
+    // Replace short forms in the text using the fetched dictionary
     Object.keys(shortFormDictionary).forEach((shortForm) => {
       const regex = new RegExp(`\\b${shortForm}\\b`, 'gi'); // Match full word
       correctedText = correctedText.replace(regex, shortFormDictionary[shortForm]);
