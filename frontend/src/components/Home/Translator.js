@@ -12,7 +12,6 @@ const Translator = () => {
   const [grammarErrors, setGrammarErrors] = useState([]);
   const [shortFormDictionary, setShortFormDictionary] = useState({});
 
-  // Fetch the accepted short forms from the provided API when component loads
   useEffect(() => {
     const fetchShortForms = async () => {
       try {
@@ -34,27 +33,37 @@ const Translator = () => {
     }
   }, [fromLanguage]);
 
-  // Function to correct short forms
   const correctShortForms = (inputText) => {
     let correctedText = inputText;
 
-    // Replace short forms in the text using the fetched dictionary
     Object.keys(shortFormDictionary).forEach((shortForm) => {
-      const regex = new RegExp(`\\b${shortForm}\\b`, 'gi'); // Match full word
+      const regex = new RegExp(`\\b${shortForm}\\b`, 'gi');
       correctedText = correctedText.replace(regex, shortFormDictionary[shortForm]);
     });
 
     return correctedText;
   };
 
+  const checkGrammar = async (inputText) => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/grammarcheck', { text: inputText });
+      return response.data.grammarErrors || [];
+    } catch (error) {
+      console.error('Grammar check failed:', error);
+      return [];
+    }
+  };
+
   const handleTranslate = async () => {
     try {
       let processedText = text;
 
-      // Only correct short forms if translating from English
       if (fromLanguage === 'en') {
         processedText = correctShortForms(text);
-        setText(processedText); // Update the text with corrected short forms
+        setText(processedText);
+
+        const grammarCheckResult = await checkGrammar(processedText);
+        setGrammarErrors(grammarCheckResult);
       }
 
       const response = await axios.post('http://localhost:5000/api/translate', {
@@ -71,10 +80,6 @@ const Translator = () => {
         setTranslationOptions(response.data.possibleTranslations);
       }
 
-      if (response.data.grammarErrors) {
-        setGrammarErrors(response.data.grammarErrors);
-      }
-
       console.log(translatedText);
       console.log(translationOptions);
     } catch (error) {
@@ -87,21 +92,24 @@ const Translator = () => {
     setToLanguage((prev) => (prev === 'en' ? 'si' : 'en'));
     setText('');
     setTranslatedText('');
+    setGrammarErrors([]);
   };
 
+  
   const highlightErrors = () => {
     let highlightedText = text;
 
     grammarErrors.forEach((error) => {
       const errorText = highlightedText.slice(error.offset, error.offset + error.length);
-      highlightedText = highlightedText.replace(
-        errorText,
-        `<span className="grammar-error" title="${error.message}">${errorText}</span>`
-      );
+      const highlightedError = `<span class="grammar-error" title="${error.message}">${errorText}</span>`;
+      highlightedText = highlightedText.replace(errorText, highlightedError);
     });
 
     return { __html: highlightedText };
   };
+  
+
+
 
   return (
     <div>
