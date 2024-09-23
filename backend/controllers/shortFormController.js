@@ -22,6 +22,16 @@ exports.getAllShortForms = async (req, res) => {
   }
 };
 
+//Get all accepted words
+exports.getAllAcceptedShortForms = async (req, res) => {
+  try {
+    const shortForms = await ShortForm.find({ status: 'approved' }); // Only fetch accepted short forms
+    res.status(200).json({ data: shortForms });
+  } catch (error) {
+    res.status(400).json({ message: 'Error fetching short form entries', error });
+  }
+};
+
 // Get a specific short form entry by short form
 exports.getShortForm = async (req, res) => {
   try {
