@@ -109,3 +109,24 @@
     transform: scale(1.05) rotate(-1deg);
   }
   
+
+
+  /*Grammer errors*/
+  .grammar-error {
+    color: red;
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  
+  .grammar-error:hover::after {
+    content: attr(title);
+    position: absolute;
+    background-color: yellow;
+    padding: 5px;
+    border-radius: 5px;
+    margin-left: 10px;
+    font-size: 12px;
+    color: black;
+  }
+  
