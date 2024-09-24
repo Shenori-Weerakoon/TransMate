@@ -261,7 +261,7 @@ const translateText = async (req, res) => {
       });
     }
 
-    // Save the translation in your database (optional)
+    // Save the translation in database
     const translation = new Translation({
       text,
       translatedText,
