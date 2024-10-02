@@ -473,19 +473,24 @@ const Translator = () => {
   };
 
   return (
-    <div>
+    <div className="body">
       <nav className="navbar">
         <NavBar />
       </nav>
 
       <div className="translator-container">
-        <div className="language-selection">
-          <button className="language-button">{fromLanguage}</button>
-          <div className="swap-icon" onClick={handleSwapLanguages}>
-            ⇆
-          </div>
-          <button className="language-button">{toLanguage}</button>
+        <div className="container-header">
+          Get A quick, <br /> free translation
         </div>
+          
+
+          <div className="language-selection">
+            <button className="language-button">{fromLanguage}</button>
+            <div className="swap-icon" onClick={handleSwapLanguages}>
+               ⇆
+            </div>
+          <button className="language-button">{toLanguage}</button>
+          </div>
         <div className="translation-section">
           <textarea
             className="feature-box"
