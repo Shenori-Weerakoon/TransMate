@@ -261,13 +261,21 @@ const translateText = async (req, res) => {
       });
     }
 
-    // Save the translation in database
-    const translation = new Translation({
-      text,
-      translatedText,
-      from,
-      to
-    });
+    // Save or update translation in the database
+    let translation = await Translation.findOne({ text, from, to });
+
+    if (!translation) {
+      console.log(`Creating new translation for text: ${text}`);
+      translation = new Translation({
+        text,
+        translatedText,
+        from,
+        to
+      });
+    } else {
+      console.log(`Updating existing translation for text: ${text}`);
+      translation.translatedText = translatedText; // Only update the translation
+    }
 
     await translation.save();
 
@@ -283,6 +291,7 @@ const translateText = async (req, res) => {
   }
 };
 
+//read all translation history
 const getTranslations = async (req, res) => {
   try {
     const translations = await Translation.find();
