@@ -261,23 +261,23 @@ const translateText = async (req, res) => {
       });
     }
 
-    // Save or update translation in the database
-    let translation = await Translation.findOne({ text, from, to });
+    // Check if the translation already exists in the database to prevent duplication
+    const existingTranslation = await Translation.findOne({ text, from, to });
 
-    if (!translation) {
+    if (existingTranslation) {
+      console.log(`Updating existing translation for text: ${text}`);
+      existingTranslation.translatedText = translatedText;
+      await existingTranslation.save();
+    } else {
       console.log(`Creating new translation for text: ${text}`);
-      translation = new Translation({
+      const translation = new Translation({
         text,
         translatedText,
         from,
         to
       });
-    } else {
-      console.log(`Updating existing translation for text: ${text}`);
-      translation.translatedText = translatedText; // Only update the translation
+      await translation.save();
     }
-
-    await translation.save();
 
     res.json({
       possibleTranslations,
