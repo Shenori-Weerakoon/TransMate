@@ -1,0 +1,61 @@
+/* PhrasebookHome.css */
+
+.phrasebook-home {
+    background-image: url('../../assets/login1.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+  }
+  
+
+  
+  .hover-scale:hover {
+    transform: scale(1.05);
+    transition: all 0.3s ease-in-out;
+  }
+  
+  
+
+/* PhrasebookHome.css */
+
+.phrasebook-home {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f8f9fa;
+  }
+  
+  .center-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .carousel-item img {
+    margin: 0 auto;
+    width: 700px;
+    height: 300px;
+    object-fit: cover;
+  }
+  
+  .welcome-heading {
+    margin-bottom: 20px;
+  }
+  
+  .top-right {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+  }
+  
+  .button-group {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Space between buttons */
+  }
+  

@@ -1,115 +1,109 @@
 import React, { useState } from 'react';
+import axios from "axios";
 import { FaUserCheck } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from "react-toastify";
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 import './login.css';
 import NavBar from '../Home/Navbar';
 
-
 const Index = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    emailOrUsername: "",
+    password: "",
+  });
   const [errors, setErrors] = useState({});
 
-  const validateForm = () => {
-    let isValid = true;
-    let errors = {};
-
-    if (!email) {
-      isValid = false;
-      errors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      isValid = false;
-      errors.email = "Email is invalid";
-    }
-
-    if (!password) {
-      isValid = false;
-      errors.password = "Password is required";
-    } else if (password.length < 6) {
-      isValid = false;
-      errors.password = "Password must be at least 6 characters";
-    }
-
-    setErrors(errors);
-    return isValid;
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      // Hardcoded admin credentials
-      const hardcodedAdmin = {
-        email: "admin@gmail.com",
-        password: "123456"
-      };
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/user/login",
+        formData
+      );
+      console.log(response.data);
 
-      // Check for hardcoded admin credentials
-      if (email === hardcodedAdmin.email && password === hardcodedAdmin.password) {
-        console.log("Admin login successful");
-        navigate("/admin"); // Navigate to the admin dashboard or page
-      } 
-      // Here, you can add logic for user authentication, such as calling an API
-      else {
-        console.log("User login successful");
-        navigate("/user-dashboard"); // Navigate to the user dashboard after successful login
-      }
+      const { userId, email, username } = response.data;
+
+      // Store the user information in AsyncStorage
+      await AsyncStorage.setItem("userId", userId.toString());
+      await AsyncStorage.setItem("userEmail", email || username);
+
+      toast.success("Logged in successfully!");
+      navigate(`/PhrasebookHome`);
+    } catch (error) {
+      console.error("Login error:", error.response.data.error);
+      toast.error("Login error!");
+
+      // Assuming errors are sent in the response data with a key `errors`
+      setErrors(error.response.data.errors || {});
     }
   };
 
-  return (       
+  return (
     <div className="App">
       <nav className="navbar">
         <NavBar />
       </nav>
-    <div className="background">
-      <div className="card col-md-6 col-lg-4">
-        <h1 className="card-header">
-          Login <FaUserCheck />
-        </h1>
-        <div className="card-body">
-          <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <label htmlFor="email" className="form-label">
-                Email:
-              </label>
-              <input
-                type="email"
-                className={`form-control ${errors.email ? "is-invalid" : ""}`}
-                id="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              {errors.email && <div className="invalid-feedback">{errors.email}</div>}
-            </div>
+      <div className="background">
+        <div className="card col-md-6 col-lg-4 mx-auto mt-5">
+          <h1 className="card-header">
+            Login <FaUserCheck />
+          </h1>
+          <div className="card-body">
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label htmlFor="emailOrUsername" className="form-label">
+                  Email or Username:
+                </label>
+                <input
+                  type="text"
+                  className={`form-control ${errors.emailOrUsername ? "is-invalid" : ""}`}
+                  id="emailOrUsername"
+                  name="emailOrUsername"
+                  placeholder="Enter your email or username"
+                  value={formData.emailOrUsername}
+                  onChange={handleChange}
+                />
+                {errors.emailOrUsername && <div className="invalid-feedback">{errors.emailOrUsername}</div>}
+              </div>
 
-            <div className="mb-3">
-              <label htmlFor="password" className="form-label">
-                Password:
-              </label>
-              <input
-                type="password"
-                className={`form-control ${errors.password ? "is-invalid" : ""}`}
-                id="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              {errors.password && <div className="invalid-feedback">{errors.password}</div>}
-            </div>
+              <div className="mb-3">
+                <label htmlFor="password" className="form-label">
+                  Password:
+                </label>
+                <input
+                  type="password"
+                  className={`form-control ${errors.password ? "is-invalid" : ""}`}
+                  id="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+                {errors.password && <div className="invalid-feedback">{errors.password}</div>}
+              </div>
 
-            <button type="submit" className="btn btn-primary w-100">
-              Login
-            </button>
+              <button type="submit" className="btn btn-primary w-100">
+                Login
+              </button>
 
-            <p className="text-center mt-3">
-              Don't have an account? <Link to="/register">Register here</Link>
-            </p>
-          </form>
+              <p className="text-center mt-3">
+                Don't have an account? <Link to="/register">Register here</Link>
+              </p>
+            </form>
+          </div>
         </div>
       </div>
-      </div>
+      <ToastContainer />
     </div>
   );
 };

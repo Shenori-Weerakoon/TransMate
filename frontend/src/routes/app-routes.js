@@ -13,6 +13,12 @@ import EditDictionary from '../components/Admin/EditDictionary';
 import TranslationList from '../components/User/TranslationList';
 import EditTranslationForm from '../components/User/EditTranslationForm';
 
+import Register from '../components/Register/index';
+import PhrasebookHome from '../components/Phrasebook/PhrasebookHome';
+import AddPhrase from '../components/Phrasebook/AddPhrase';
+import EditPhrase from '../components/Phrasebook/EditPhrase';
+import PhraseList from '../components/Phrasebook/PhraseList';
+
 import ShortFormWord from '../components/Admin/ShortFormWord';
 
 const AppRoutes = () => {
@@ -30,7 +36,12 @@ const AppRoutes = () => {
                 <Route path="/editDictionary/:id" element={<EditDictionary />} />
                 <Route path="/translationList" element={<TranslationList />} /> 
                 <Route path="/translationForm" element={<EditTranslationForm />} />                     
-                <Route path="/shortForm" element={<ShortFormWord />} />                     
+                <Route path="/shortForm" element={<ShortFormWord />} />   
+                <Route path="/register" element={<Register />} /> 
+                <Route path="/PhrasebookHome" element={<PhrasebookHome/>} />
+                <Route path="/phrasebook/add" element={<AddPhrase/>} /> 
+                <Route path="/phrasebook/update/:id" element={<EditPhrase />} /> 
+                <Route path="/phrasebook/" element={<PhraseList/>} />                    
             </Routes>
         </Router>
     </>

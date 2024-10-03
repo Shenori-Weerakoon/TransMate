@@ -1,193 +1,182 @@
 import './register.css';
 import React, { useState } from 'react';
-import { Form, Button, Container, Row, Col } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
-import NavBar from '../../components/Navbar';
-import axios from 'axios'; 
-import toast from 'react-hot-toast';
-import Footer from "../../components/Footer.js";
+import { Link, useNavigate } from 'react-router-dom';
+import NavBar from '../Home/Navbar';
+import { FaUserCheck } from 'react-icons/fa';
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
 
+const initialState = {
+  fullName: '',
+  username: '',
+  email: '',
+  contactNumber: '',
+  password: '',
+};
 
-const index = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    address: '',
-    mobile: '',
-    password: '',
-  });
-
+function Register() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate(); // Initialize useNavigate
 
-  const handleChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const errorsObj = validateForm(formData);
-
-    if (Object.keys(errorsObj).length === 0) {
-      try {
-        const res = await axios.post('http://localhost:8000/customer/add', formData);
-        console.log(res.data); // Handle success response
-        setFormData({
-          name: '',
-          email: '',
-          address: '',
-          mobile: '',
-          password: '',
-          confirmPassword: '',
-        });
-        toast.success("Customer registered successfully!!");
-        navigate('/login'); // Navigate to login page after successful registration
-        
-      } catch (err) {
-        setErrors(err.response.data.errors);
-        toast.error("Error in creating customer !");
-      }
-    } else {
+    const errorsObj = validateForm();
+    if (Object.keys(errorsObj).length > 0) {
       setErrors(errorsObj);
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/user/register",
+        formData
+      );
+      console.log(response.data);
+      
+      // Store user information in localStorage
+      localStorage.setItem("userId", response.data.userId);
+      localStorage.setItem("userEmail", formData.email);
+
+      toast.success("User registered successfully!");
+      setFormData(initialState);
+      navigate(`/login`);
+    } catch (error) {
+      console.error("Error:", error.response?.data?.error || "Unknown error");
+      toast.error(error.response?.data?.error || "Failed to register user");
     }
   };
 
-  const validateForm = (data) => {
+  const validateForm = () => {
+    const { fullName, username, email, contactNumber, password } = formData;
     const errors = {};
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!data.name.trim()) {
-        errors.name = "Name is required";
+    if (!fullName) errors.fullName = "Full Name is required.";
+    if (!username) errors.username = "Username is required.";
+    if (!email) errors.email = "Email is required.";
+    if (!contactNumber) errors.contactNumber = "Mobile Number is required.";
+    if (!password) errors.password = "Password is required.";
+
+    if (contactNumber && !/^\d{10}$/.test(contactNumber)) {
+      errors.contactNumber = "Mobile Number must be 10 digits.";
     }
-    if (!data.mobile.trim()) {
-        errors.mobile = "Contact number is required";
-    } else if (!/^\d{10}$/.test(data.mobile.trim())) {
-        errors.mobile = "Invalid contact number";
+
+    if (email && !/\S+@\S+\.\S+/.test(email)) {
+      errors.email = "Invalid email address.";
     }
-    if (!data.email.trim()) {
-        errors.email = "Email is required";
-    } else if (!emailRegex.test(data.email.trim())) {
-        errors.email = "Invalid email address";
+
+    if (password && password.length < 6) {
+      errors.password = "Password must be at least 6 characters.";
     }
-    if (!data.address.trim()) {
-        errors.address = "Address is required";
-    }
-    if (!data.password.trim()) {
-        errors.password = "Password is required";
-    }else if (data.password.trim().length < 6) {
-      errors.password = "Password should be at least 6 characters long";
-    }
-    if (data.password !== data.confirmPassword) {
-      errors.confirmPassword = "Passwords do not match";
-    }
+
     return errors;
   };
 
   return (
-    <div className="background" style={{backgroundColor:'black'}}>
-    
-              <NavBar />
+    <div className="App">
+      <nav className="navbar">
+        <NavBar />
+      </nav>
 
-    <Container className='all' style={{ width: '80%', marginTop:'20px', paddingLeft:'150px', paddingRight:'150px' }}>
-      <Row className="justify-content-md-center" style={{ border: '2px solid black', marginTop: '50px', marginBottom: '50px', width: '100%', backgroundColor: 'white' }}>
-        <Col xs={12} md={6}>
-          <h2 className="mb-4 text-center" style={{fontWeight:'600'}}>Registration Form</h2>
+      <div className="background">
+        <div className="card col-md-8 col-lg-6 mx-auto mt-5">
+          <h1 className="card-header text-center">
+            Register <FaUserCheck />
+          </h1>
+          <div className="card-body">
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label htmlFor="fullName" className="form-label">Full Name:</label>
+                <input
+                  type="text"
+                  className={`form-control ${errors.fullName ? "is-invalid" : ""}`}
+                  id="fullName"
+                  name="fullName"
+                  placeholder="Enter your full name"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                />
+                {errors.fullName && <div className="invalid-feedback">{errors.fullName}</div>}
+              </div>
 
-          <Form onSubmit={handleSubmit} style={{ width: '100%', marginLeft: 'auto', marginRight: 'auto' }}>
+              <div className="mb-3">
+                <label htmlFor="username" className="form-label">Username:</label>
+                <input
+                  type="text"
+                  className={`form-control ${errors.username ? "is-invalid" : ""}`}
+                  id="username"
+                  name="username"
+                  placeholder="Enter your username"
+                  value={formData.username}
+                  onChange={handleChange}
+                />
+                {errors.username && <div className="invalid-feedback">{errors.username}</div>}
+              </div>
 
+              <div className="mb-3">
+                <label htmlFor="email" className="form-label">Email:</label>
+                <input
+                  type="email"
+                  className={`form-control ${errors.email ? "is-invalid" : ""}`}
+                  id="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+                {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+              </div>
 
-            <Form.Group controlId="name">
-              <Form.Label>Full Name :</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter full name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-              {errors.name && <Form.Text className="text-danger">{errors.name}</Form.Text>}
-            </Form.Group>
+              <div className="mb-3">
+                <label htmlFor="contactNumber" className="form-label">Phone Number:</label>
+                <input
+                  type="text"
+                  className={`form-control ${errors.contactNumber ? "is-invalid" : ""}`}
+                  id="contactNumber"
+                  name="contactNumber"
+                  placeholder="Enter your phone number"
+                  value={formData.contactNumber}
+                  onChange={handleChange}
+                />
+                {errors.contactNumber && <div className="invalid-feedback">{errors.contactNumber}</div>}
+              </div>
 
-            <Form.Group controlId="email">
-              <Form.Label>Email :</Form.Label>
-              <Form.Control
-                type="email"
-                placeholder="Enter email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-              {errors.email && <Form.Text className="text-danger">{errors.email}</Form.Text>}
-            </Form.Group>
+              <div className="mb-3">
+                <label htmlFor="password" className="form-label">Password:</label>
+                <input
+                  type="password"
+                  className={`form-control ${errors.password ? "is-invalid" : ""}`}
+                  id="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+                {errors.password && <div className="invalid-feedback">{errors.password}</div>}
+              </div>
 
-            <Form.Group controlId="address">
-              <Form.Label>Address :</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter address"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                required
-              />
-              {errors.address && <Form.Text className="text-danger">{errors.address}</Form.Text>}
-            </Form.Group>
+              <button type="submit" className="btn btn-primary w-100">
+                Register
+              </button>
 
-            <Form.Group controlId="phoneNumber">
-              <Form.Label>Phone Number:</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter phone number"
-                name="mobile"
-                value={formData.mobile}
-                onChange={handleChange}
-                required
-              />
-              {errors.mobile && <Form.Text className="text-danger">{errors.mobile}</Form.Text>}
-            </Form.Group>
-
-            <Form.Group controlId="password">
-              <Form.Label>Password :</Form.Label>
-              <Form.Control
-              
-                type="password"
-                placeholder="Enter password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-              {errors.password && <Form.Text className="text-danger">{errors.password}</Form.Text>}
-            </Form.Group>
-
-            <Form.Group controlId="confirmPassword">
-              <Form.Label>Confirm Password :</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Confirm password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-              />
-              {errors.confirmPassword && <Form.Text className="text-danger">{errors.confirmPassword}</Form.Text>}
-            </Form.Group> <br />
-
-            <div className="text-center">
-              <Button variant="primary" type="submit">Sign Up</Button>
-            </div>
-
-          </Form>
-          <p className="mt-3 text-center">Have an Account? <Link to="/login">Login here</Link></p>
-        </Col>
-      </Row><br></br>
-    </Container>
-    
-      <Footer />
+              <p className="text-center mt-3">
+                Already have an account? <Link to="/login">Login here</Link>
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+      <ToastContainer />
     </div>
   );
-};
+}
 
-export default index;
+export default Register;
