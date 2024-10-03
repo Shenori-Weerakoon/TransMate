@@ -6,6 +6,8 @@ const translateRoutes = require('./routes/translateRoutes');
 const sinhalaDictionaryRoutes = require('./routes/SinhalaDictionaryRoutes');
 const axios = require('axios');
 const bodyParser = require('body-parser');
+const phrasebookRoutes = require('./routes/phrasebookRoutes.js');
+const userRoutes = require ('./routes/userRoutes.js')
 
 
 const shortFormRouter = require('./routes/shortFormRouter');
@@ -24,6 +26,9 @@ app.use('/api', translateRoutes);
 app.use('/api/sinhala-dictionary', sinhalaDictionaryRoutes);
 
 app.use('/words', shortFormRouter);
+
+app.use('/phrasebook', phrasebookRoutes); 
+app.use('/user', userRoutes); 
 
 
 app.post('/api/grammarcheck', async (req, res) => {

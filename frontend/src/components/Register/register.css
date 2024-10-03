@@ -39,9 +39,9 @@
 }
 
 .background{
-    background-image: url(../../assets/login.jpg);
+    background-image: url(../../assets/login1.jpg);
   /* Adjust the last value (0.5) for opacity */
     background-blend-mode: overlay; /* Apply the overlay blend mode to mix the background color with the image */
-   /*height: 900px;*/
+   height: 900px;
 
 }
