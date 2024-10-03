@@ -154,8 +154,7 @@ export default TranslationList;*/
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import NavBar from '../Home/Navbar';
-import "./translator.css";
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import "./translator.css"; // Ensure you have CSS for styling the modal
 
 const TranslationList = () => {
   const [translations, setTranslations] = useState([]);
@@ -250,7 +249,7 @@ const TranslationList = () => {
       </nav>
       <div style={{ padding: '20px' }}>
         <h2>Translations</h2>
-        <table className="translation-table" style={{ width: '80%', borderCollapse: 'collapse' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
               <th style={{ border: '1px solid #ddd', padding: '8px' }}>Original Text</th>
@@ -263,11 +262,9 @@ const TranslationList = () => {
               <tr key={translation._id}>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{translation.text}</td>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{translation.translatedText}</td>
-                <td style={{ border: '1px solid #ddd', padding: '18px'}}>
-                <button onClick={() => handleEdit(translation)}>
-                  <i className="fas fa-pen"></i>
-                </button>
-                <button onClick={() => deleteTranslation(translation._id)}><i class="fas fa-trash"></i></button>
+                <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                  <button onClick={() => handleEdit(translation)} style={{ marginRight: '5px' }}>Edit</button>
+                  <button onClick={() => deleteTranslation(translation._id)}>Delete</button>
                 </td>
               </tr>
             ))}
