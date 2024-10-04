@@ -380,7 +380,23 @@ const Translator = () => {
   const [toLanguage, setToLanguage] = useState('en');
   const [grammarErrors, setGrammarErrors] = useState([]);
   const [shortFormDictionary, setShortFormDictionary] = useState({});
+  const [error, setError] = useState('');
+  const [user, setUser] = useState(null);
 
+  useEffect(() => {
+    // Fetch user information (assuming you have a method to get user data)
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/user'); // Update with your endpoint
+        setUser(response.data); // Assume response.data contains user information
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData(); // Fetch user data when the component mounts
+  }, []);
+  
   useEffect(() => {
     const fetchShortForms = async () => {
       try {
@@ -439,6 +455,7 @@ const Translator = () => {
         text: processedText,
         from: fromLanguage,
         to: toLanguage,
+        userId: user ? user.id : null,
       });
 
       if (response.data.translatedText) {
@@ -473,37 +490,59 @@ const Translator = () => {
   };
 
   return (
-    <div>
+    <div className="body">
       <nav className="navbar">
         <NavBar />
       </nav>
 
       <div className="translator-container">
+        <div className="container-header">
+          Get A quick, <br /> free translation
+        </div>
+
+
         <div className="language-selection">
-          <button className="language-button">{fromLanguage}</button>
+          <button className="language-label">{fromLanguage}</button>
           <div className="swap-icon" onClick={handleSwapLanguages}>
             ⇆
           </div>
-          <button className="language-button">{toLanguage}</button>
+          <button className="language-label">{toLanguage}</button>
         </div>
         <div className="translation-section">
           <textarea
-            className="feature-box"
-            placeholder={`Enter something in ${fromLanguage}...`}
+            className="textbox"
+            placeholder={`Type Your Text Here...`}
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            onChange={(e) => {
+              setText(e.target.value);
+              setError(''); // Clear the error message when the user types
+            }}
           />
+
           <textarea
-            className="feature-box"
-            placeholder={`Translating to ${toLanguage}...`}
+            className="textbox"
+            placeholder={`Translation...`}
             value={translatedText}
             readOnly
             style={{ marginLeft: '30px' }}
           />
+
+          {/* Display error message if no text is provided */}
+          {error && <p className="error-message">{error}</p>}
         </div>
-        <button className="translate-button" onClick={handleTranslate}>
-          Translate
+
+        <button 
+          className="translate-button" 
+          onClick={() => {
+            if (!text || text.trim() === '') {
+              window.alert('Please enter text to translate.'); // Show error message in alert box
+            } else {
+              handleTranslate();
+            }
+          }}>
+            Translate
         </button>
+
 
         {fromLanguage === 'si' && Object.keys(translationOptions).length > 0 ? (
           <ul>
