@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import NavBar from '../Home/Navbar';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import NotoSansSinhalaBase64 from './NotoSansSinhalaBase64';
 import "./translator.css"; // Ensure you have CSS for styling
 
 const TranslationList = () => {
@@ -8,6 +11,7 @@ const TranslationList = () => {
   const [selectedTranslation, setSelectedTranslation] = useState(null);
   const [updatedText, setUpdatedText] = useState('');
   const [updatedTranslatedText, setUpdatedTranslatedText] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Fetch translations from the backend
   useEffect(() => {
@@ -90,13 +94,66 @@ const TranslationList = () => {
     }
   };
 
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredTranslations = translations.filter((translation) =>
+    translation.text.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    translation.translatedText.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Generate PDF Report for last 15 translations
+  const generatePDFReport = () => {
+    const doc = new jsPDF();
+  const recentTranslations = translations.slice(-15); // Get last 15 translations
+
+  // Set Noto Sans Sinhala font using Base64
+  doc.addFileToVFS('NotoSansSinhala.ttf', NotoSansSinhalaBase64); 
+  doc.addFont('NotoSansSinhala.ttf', 'NotoSansSinhala', 'normal');
+  doc.setFont('NotoSansSinhala', 'normal');
+
+  // Add title with Sinhala font
+  doc.setFontSize(18);
+  doc.text('Recent Translations', 14, 22);
+
+  // Use autoTable plugin for proper table formatting
+  doc.autoTable({
+    head: [['Original Text', 'Translated Text']], // Table headers
+    body: recentTranslations.map((translation) => [
+      translation.text,           // Original Text (Sinhala or English)
+      translation.translatedText, // Translated Text (Sinhala or English)
+    ]),
+    startY: 30, // Set where the table starts in PDF
+    theme: 'grid', // Add table grid style
+    styles: { font: 'NotoSansSinhala' }, // Set the font for the table content
+  });
+
+  // Save the generated PDF
+  doc.save('recent_translations_report.pdf');
+  };
+
   return (
     <div style={{ height: '100vh' }}>
-      <nav style={{ width: '100%', backgroundColor: '#f8f9fa', padding: '10px 20px' }}>
+      <nav className="navbar">
         <NavBar />
       </nav>
       <div style={{ padding: '20px' }}>
         <h2>Translations</h2>
+        {/* Search input */}
+        <input
+          type="text"
+          placeholder="Search translations..."
+          value={searchTerm}
+          onChange={handleSearch}
+          style={{ padding: '10px', marginBottom: '20px', width: '30%' }}
+        />
+
+        {/* PDF Generation Button */}
+        <button className="download-button" onClick={generatePDFReport} style={{ margin: '20px', padding: '10px 20px', width: '100px', background: 'blue' }}>
+          Download
+        </button>
+
         <table style={{ width: '80%', borderCollapse: 'collapse', margin:'auto' }}>
           <thead>
             <tr>
@@ -106,7 +163,8 @@ const TranslationList = () => {
             </tr>
           </thead>
           <tbody>
-            {translations.map(translation => (
+
+            {filteredTranslations.map(translation => (
               <tr key={translation._id}>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{translation.text}</td>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{translation.translatedText}</td>
