@@ -37,7 +37,7 @@ function SideBar() {
           </Link>
         </li>
         <li className="my-4">
-          <Link to="/translations" className="text-light text-decoration-none">
+          <Link to="/translationList" className="text-light text-decoration-none">
             <FontAwesomeIcon icon={faLanguage} className="me-3" />
             Translations
           </Link>
