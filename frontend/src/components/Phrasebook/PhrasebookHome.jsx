@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./PhrasebookHome.css"; // Custom CSS for background image and centering
 import { Carousel } from "react-bootstrap"; // Bootstrap Carousel for slideshow
+import NavBar from '../Home/Navbar';
 
 function PhrasebookHome() {
   const navigate = useNavigate();
@@ -30,6 +31,10 @@ function PhrasebookHome() {
   };
 
   return (
+    <div>
+      <nav className="navbar">
+        <NavBar />
+      </nav>
     <div className="container-fluid phrasebook-home">
       <div className="center-content">
         {/* Top-right user info and logout button */}
@@ -110,6 +115,7 @@ function PhrasebookHome() {
         </div>
       </div>
       <ToastContainer />
+    </div>
     </div>
   );
 }
