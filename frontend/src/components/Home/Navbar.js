@@ -52,7 +52,7 @@ function NavBar({ isAuthenticated, user, logout }) {
             </LinkContainer>
             <LinkContainer to="/translationList">
               <Nav.Link className="nav-link-custom">
-                History
+                Recents
               </Nav.Link>
             </LinkContainer>
             <LinkContainer to="/login">
