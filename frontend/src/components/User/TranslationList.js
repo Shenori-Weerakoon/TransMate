@@ -50,8 +50,8 @@ const TranslationList = () => {
 
         setTranslations(updatedTranslations); // This replaces the old entry
         setSelectedTranslation(null); // Clear selected translation after updating
-        setUpdatedText(''); // Clear updatedText
-        setUpdatedTranslatedText(''); // Clear updatedTranslatedText
+        //setUpdatedText(''); // Clear updatedText
+        //setUpdatedTranslatedText(''); // Clear updatedTranslatedText
       } catch (error) {
         console.error('Error updating translation:', error);
       }
@@ -63,6 +63,7 @@ const TranslationList = () => {
     setSelectedTranslation(translation);
     setUpdatedText(translation.text);
     setUpdatedTranslatedText(translation.translatedText);
+    console.log('Selected Translation:', translation);
   };
 
   // Handle text input change
@@ -110,8 +111,8 @@ const TranslationList = () => {
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{translation.text}</td>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{translation.translatedText}</td>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                  <button onClick={() => handleEdit(translation)} style={{ marginRight: '5px' }}>Edit</button>
-                  <button onClick={() => deleteTranslation(translation._id)}>Delete</button>
+                  <button className="save-button" onClick={() => handleEdit(translation)}>Edit</button>
+                  <button className="cancel-button" onClick={() => deleteTranslation(translation._id)}>Delete</button>
                 </td>
               </tr>
             ))}
@@ -120,39 +121,42 @@ const TranslationList = () => {
 
         {/* Form for editing translation below the table */}
         {selectedTranslation && (
-          <div style={{ marginTop: '20px', padding: '10px', border: '1px solid #ddd', borderRadius: '5px' }}>
-            <h3>Edit Translation</h3>
-            <label>
-              Text:
-              <input
-                type="text"
-                value={updatedText}
-                onChange={handleTextChange}
-                style={{ margin: '10px', padding: '5px', width: '100%' }}
-              />
-            </label>
-            <br />
-            <label>
-              Translated Text:
-              <input
-                type="text"
-                value={updatedTranslatedText}
-                readOnly
-                style={{ margin: '10px', padding: '5px', width: '100%' }}
-              />
-            </label>
-            <br />
-            <button onClick={handleTranslate} style={{ marginRight: '10px' }}>Translate</button>
-            <button onClick={handleUpdate} style={{ marginRight: '10px' }}>Save</button>
-            <button onClick={() => {
-              setSelectedTranslation(null); // Close form
-              setUpdatedText(''); // Clear updatedText
-              setUpdatedTranslatedText(''); // Clear updatedTranslatedText
-            }}>Cancel</button>
+          <div className="custom-modal">
+            <div className="custom-modal-content" style={{ width: '600px', height: '400px' }}>
+              <h3>Edit Translation</h3>
+              <label>
+                Text:
+                <input className="modal-text-input"
+                  type="text"
+                  value={updatedText}
+                  onChange={handleTextChange}
+                  style={{ width: '100%', padding: '10px', margin: '10px 0', boxSizing: 'border-box' }}
+                />
+              </label>
+              <br />
+              <button className="translate-button" onClick={handleTranslate}>Translate</button>
+              <br /><br />
+              <label>
+                Translated Text:
+                <input className="modal-text-input"
+                  type="text"
+                  value={updatedTranslatedText}
+                  readOnly
+                />
+              </label>
+              <br />
+              <button className="save-button" onClick={handleUpdate}>Save</button>
+              <button className="cancel-button" onClick={() => {
+                setSelectedTranslation(null); // Close form
+                setUpdatedText(''); // Clear updatedText
+                setUpdatedTranslatedText(''); // Clear updatedTranslatedText
+              }}>Cancel</button>
+            </div>
           </div>
-        )}
+          )}
       </div>
     </div>
+    
   );
 };
 

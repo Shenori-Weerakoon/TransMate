@@ -235,50 +235,96 @@ body, html {
   }
 }
 
-.modal {
-  display: block; /* Show the modal */
+.custom-modal {
+  display: flex; /* Ensure the modal is visible */
   position: fixed;
-  z-index: 1; /* Sit on top */
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
   left: 0;
   top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4); /* Transparent background */
 }
 
-.modal-content {
-  background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
+.custom-modal-content {
+  background-color: #fff;
   padding: 20px;
-  border: 1px solid #888;
-  width: 50%; /* Could be more or less depending on screen size */
+  border-radius: 8px;
+  width: 400px; /* Set the modal's width */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease; /* Add animation */
 }
 
-.modal-content label {
-  display: block;
+/* Button and input styles for consistency */
+input[type="text"] {
+  width: calc(100% - 20px);
+  padding: 10px;
   margin: 10px 0;
-}
-
-.modal-content input[type="text"] {
-  width: 100%; /* Make the input take up the full width of the container */
-  padding: 10px; /* Add padding to increase the height */
-  font-size: 16px; /* Increase font size */
-  margin-top: 5px; /* Add some space between label and input */
   border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box; /* Ensure padding is included in the width calculation */
+  border-radius: 5px;
 }
 
-.modal-content button {
-  margin: 10px 5px;
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
+button {
+  padding: 6px 10px;
   border: none;
-  border-radius: 4px;
+  color: white;
+  border-radius: 5px;
   cursor: pointer;
 }
 
-.modal-content button:hover {
-  background-color: #0056b3;
+button.translate-button {
+  background-color: #007bff; /* Blue color for translate button */
+  color: white;
+  padding: 6px 10px;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button.translate-button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Save Button Style */
+button.save-button {
+  padding: 6px 10px;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #28a745; /* Green color for save button */
+  color: white;
+}
+
+button.save-button:hover {
+  background-color: #218838; /* Darker green on hover */
+}
+
+/* Cancel Button Style */
+button.cancel-button {
+  padding: 6px 6px;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #dc3545; /* Red color for cancel button */
+  color: white;
+}
+
+button.cancel-button:hover {
+  background-color: #c82333; /* Darker red on hover */
+}
+
+/* Fade-in effect for the modal */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
