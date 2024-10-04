@@ -267,6 +267,13 @@ input[type="text"] {
   border-radius: 5px;
 }
 
+.download-button {
+  margin: 20px;
+  align-content: center;
+  width: 120px;
+  background: #007bff
+}
+
 button {
   padding: 6px 10px;
   border: none;
