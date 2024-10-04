@@ -97,12 +97,12 @@ const TranslationList = () => {
       </nav>
       <div style={{ padding: '20px' }}>
         <h2>Translations</h2>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table style={{ width: '80%', borderCollapse: 'collapse', margin:'auto' }}>
           <thead>
             <tr>
               <th style={{ border: '1px solid #ddd', padding: '8px' }}>Original Text</th>
               <th style={{ border: '1px solid #ddd', padding: '8px' }}>Translated Text</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px' }}>Actions</th>
+              <th style={{ border: '1px solid #ddd', padding: '8px', width: '250px', alignItems: 'center' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -110,7 +110,7 @@ const TranslationList = () => {
               <tr key={translation._id}>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{translation.text}</td>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{translation.translatedText}</td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                <td style={{ border: '1px solid #ddd', padding: '8px', marginLeft: '8px' }}>
                   <button className="save-button" onClick={() => handleEdit(translation)}>Edit</button>
                   <button className="cancel-button" onClick={() => deleteTranslation(translation._id)}>Delete</button>
                 </td>
