@@ -1,64 +1,103 @@
+.body {
+  background: linear-gradient(to bottom, #E4EEF1, #95BDCA, #104456);
+}
+
 .translator-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-image: url("https://www.pexels.com/photo/blue-sky-281260/");
-    padding: 20px;
-    border-radius: 10px;
-    padding-top: 100px;
-    padding-bottom: 100px;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url("https://www.pexels.com/photo/blue-sky-281260/");
+  padding: 20px;
+  border-radius: 10px;
+  padding-top: 100px;
+  padding-bottom: 100px;
+  position: relative;
+}
+
+.container-header {
+  width: 100%; /* Ensure it spans the container width */
+  max-width: 1200px; /* Limit the width */
+  margin-bottom: 20px; /* Add some space below the header */
+  color: #104456;
+  font-size: 64px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  text-transform: capitalize;
+  letter-spacing: 2.56px;
+  word-wrap: break-word;
+  position: relative;
+  top: 0;
+  left: 0;
+}
   
-  .language-selection {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
+.language-selection {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/*.language-label {
+  font-size: 24px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  color: #000000;
+  margin: 15 20px;
+}
+
+.language-icon-label img {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}*/
+
+.language-label {
+  background-color: transparent;
+  border: 1px solid #266DB6;
+  box-sizing: border-box;
+  color: #00132C;
+  font-family: "Avenir Next LT W01 Bold",sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 24px;
+  padding: 16px 23px;
+  position: relative;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.language-label:hover,
+.language-label:active {
+  outline: 0;
+}
+
+.language-label:hover {
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.language-label:before {
+  background-color: #D5EDF6;
+  content: "";
+  height: calc(100% + 3px);
+  position: absolute;
+  right: -7px;
+  top: -9px;
+  transition: background-color 300ms ease-in;
+  width: 100%;
+  z-index: -1;
+}
+
+.language-label:hover:before {
+  background-color: #104456;
+}
+
+@media (min-width: 768px) {
+  .language-label {
+    padding: 16px 32px;
   }
-  
-  .language-button {
-    appearance: none;
-    backface-visibility: hidden;
-    background-color: #2f80ed;
-    border-radius: 10px;
-    border-style: none;
-    box-shadow: none;
-    box-sizing: border-box;
-    color: #fff;
-    cursor: pointer;
-    display: inline-block;
-    font-family: Inter,-apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    height: 50px;
-    letter-spacing: normal;
-    line-height: 1.5;
-    outline: none;
-    overflow: hidden;
-    padding: 14px 30px;
-    position: relative;
-    text-align: center;
-    text-decoration: none;
-    transform: translate3d(0, 0, 0);
-    transition: all .3s;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    vertical-align: top;
-    white-space: nowrap;
-  }
-  
-  .language-button:hover {
-    background-color: #1366d6;
-    box-shadow: rgba(0, 0, 0, .05) 0 5px 30px, rgba(0, 0, 0, .05) 0 1px 4px;
-    opacity: 1;
-    transform: translateY(0);
-    transition-duration: .35s;
-  }
-  
-  .language-button:hover:after {
-    opacity: .5;
-  }
-  
+}
   
   .swap-icon {
     font-size: 24px;
@@ -74,31 +113,44 @@
     margin-bottom: 20px;
   }
   
-  .input-text,
-  .output-text {
-    width: 65%;
-    height: 150px;
-    border: 1px solid #b0bec5;
-    border-radius: 5px;
-    padding: 10px;
-    font-size: 16px;
+  .textbox {
+    height:auto;
+    max-width:600px;
+    color:#ffffff;
+    font-weight:400;
+    font-size:18px;
+    font-family:'Ubuntu', Helvetica, Arial, sans-serif;
+    align-content: center;
+    text-align: center;
+    width:100%;
+    background:#d7d7d89b;
+    border-radius:3px;
+    line-height:2em;
+    border:none;
+    border-radius: 18px;
+    box-shadow:0px 0px 5px 1px rgba(0,0,0,0.1);
+    padding:30px;
+    -webkit-transition: height 2s ease;
+    -moz-transition: height 2s ease;
+    -ms-transition: height 2s ease;
+    -o-transition: height 2s ease;
+    transition: height 2s ease;
   }
   
   .translate-button {
-    width: 15%;
-    background-color: #587697;
+    width: 10%;
+    background-color: #333333;
     border-radius: 100px;
-    box-shadow: rgba(44, 94, 187, 0.2) 0 -25px 18px -14px inset,rgba(44, 65, 187, 0.15) 0 1px 2px,rgba(70, 44, 187, 0.15) 0 2px 4px,rgba(56, 44, 187, 0.15) 0 4px 8px,rgba(46, 44, 187, 0.15) 0 8px 16px,rgba(44, 80, 187, 0.15) 0 16px 32px;
     color: rgb(255, 255, 255);
     cursor: pointer;
     display: inline-block;
     font-family: CerebriSans-Regular,-apple-system,system-ui,Roboto,sans-serif;
-    padding: 7px 20px;
+    padding: 10px 20px;
     text-align: center;
     text-decoration: none;
     transition: all 250ms;
     border: 0;
-    font-size: 16px;
+    font-size: 20px;
     user-select: none;
     -webkit-user-select: none;
     /*touch-action: manipulation*/;
